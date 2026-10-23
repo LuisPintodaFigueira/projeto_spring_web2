@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: estoufrito
+  datasource:
+    url: jdbc:h2:mem:estoufrito
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  h2:
+    console:
+      enabled: true
