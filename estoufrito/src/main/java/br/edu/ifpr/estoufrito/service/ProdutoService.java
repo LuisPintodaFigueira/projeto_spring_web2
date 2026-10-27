@@ -45,7 +45,23 @@ public class ProdutoService {
     }
 
     public Produto adicionarEstoque(Long id,  int quantidade) {
-        Produto produto = produtoRepository.findById(id).orElse(null);
+        Produto produto = produtoRepository.findById(id).orElseThrow(() -> new RuntimeException("Produto não encontrado"));
 
+        if (quantidade < 0) {
+            throw new IllegalArgumentException("A quantidade a ser adicionada não pode ser negativa.");
+        }
+
+        produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + quantidade);
+
+        return produtoRepository.save(produto);
+
+    }
+
+    public Produto removerProduto(Long id) {
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com o ID: " + id));
+
+        produtoRepository.delete(produto);
+        return produto;
     }
 }
