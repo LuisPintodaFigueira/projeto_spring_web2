@@ -28,6 +28,7 @@ public class ItemVenda {
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -35,6 +36,7 @@ public class ItemVenda {
     public int getProdutoId() {
         return produtoId;
     }
+
     public void setProdutoId(int produtoId) {
         this.produtoId = produtoId;
     }
@@ -42,6 +44,7 @@ public class ItemVenda {
     public String getNomeProduto() {
         return nomeProduto;
     }
+
     public void setNomeProduto(String nomeProduto) {
         this.nomeProduto = nomeProduto;
     }
@@ -49,6 +52,7 @@ public class ItemVenda {
     public int getQuantidade() {
         return quantidade;
     }
+
     public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
     }
@@ -56,6 +60,7 @@ public class ItemVenda {
     public float getPrecoUnitario() {
         return precoUnitario;
     }
+
     public void setPrecoUnitario(float precoUnitario) {
         this.precoUnitario = precoUnitario;
     }
@@ -63,6 +68,7 @@ public class ItemVenda {
     public float getCustoUnitario() {
         return custoUnitario;
     }
+
     public void setCustoUnitario(float custoUnitario) {
         this.custoUnitario = custoUnitario;
     }
@@ -70,8 +76,9 @@ public class ItemVenda {
     public Venda getVenda() {
         return venda;
     }
+
     public void setVenda(Venda venda) {
         this.venda = venda;
     }
-    
+
 }
