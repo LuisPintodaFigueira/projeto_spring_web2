@@ -20,5 +20,31 @@ export function fomatarData(dataHora) {
     } else {
         data = new Date(dataHora);
     }
+
+    if (isNaN(data.getTime())) return String(dataHora);
+    const dois = (n) => String(n).padStart(2, '0');
+    return (
+        `${dois(data.getDate())}/${dois(data.getMonth() + 1)}/${data.getFullYear()}` +
+        `${dois(data.getHours())}:${dois(data.getMinutes())}`
+    );
     
+}
+
+export function avisar(titulo, mensagem) {
+    if (Plataform.OS === 'web') {
+        window.alert(titulo + (mensagem ? '\n' + mensagem : ''));
+    } else {
+        Alert.alert(titulo, mensagem);
+    }
+}
+
+export function confirmar(titulo, mensagem, aoConfirmar) {
+    if(Plataform.OS === 'web') {
+        if (window.confirm(titulo + '\n' + mensagem)) aoConfirmar();        
+    } else {
+        Alert.alert(titulo, mensagem, [
+            { text: 'Cancelar', style: 'cancel' },
+            { text: 'Confirmar', style: 'destructive', onPress: aoConfirmar },            
+        ])
+    }
 }
