@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StatusBar } from 'react-native';
 import TelaPrincipal from './src/telas/TelaPrincipal';
-import NovaVendaTela from './src/telas/NovaVendaTela';
 import VendasTela from './src/telas/TelaVendas';
-import EstatisticasTela from './src/telas/TelaEstatisticas';
+import TelaEstatistica from './src/telas/TelaEstatistica';
 import { cores } from './src/estilos';
+import TelaVendas from './src/telas/TelaVendas';
+import TelaEStatistica from './src/telas/TelaEstatistica';
 
 const ABAS = [
   { id: 'produtos', titulo: 'Produtos' },
@@ -17,10 +18,10 @@ export default function App() {
   const [abaAtual, setAbaAtual] = useState('produtos');
 
   let tela;
-  if (abaAtual === 'produtos') tela = <ProdutosTela />;
-  else if (abaAtual === 'venda') tela = <NovaVendaTela />;
-  else if (abaAtual === 'vendas') tela = <VendasTela />;
-  else tela = <EstatisticasTela />;
+  if (abaAtual === 'produtos') tela = <TelaPrincipal></TelaPrincipal>;
+  //else if (abaAtual === 'venda') tela = <NovaVendaTela />;
+  else if (abaAtual === 'vendas') tela = <TelaVendas></TelaVendas>;
+  else tela = <TelaEstatistica></TelaEstatistica>;
 
   return (
     <View style={{ flex: 1, backgroundColor: cores.fundo, paddingTop: 40 }}>

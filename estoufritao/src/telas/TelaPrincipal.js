@@ -3,7 +3,7 @@ import { View, Text, TextInput, ScrollView, RefreshControl } from "react-native"
 import * as api from '../api';
 import Botao from '../componentes/Botao';
 import { estilos } from '../estilos';
-import { formatarMoeda, lerNumero, avisar, confirmar } from '../utils';
+import { formatarMoeda, lerNumero, avisar, confirmar } from '../util';
 
 export function ProdutoItem({produto, aoMudar}) {
     const [novoPreco, setNovoPreco] = useState('');
@@ -94,7 +94,7 @@ export default function ProdutosTela() {
     const [custo, setCusto] = useState('');
     const [estoque, setEstoque] = useState('');
 
-    const carregar = usecallback(async () => {
+    const carregar = useCallback(async () => {
         setCarregando(true);
         setErro('');
         try {
@@ -146,7 +146,7 @@ export default function ProdutosTela() {
                 <TextInput style={estilos.entrada} placeholder="Preço de venda" keyboardType="decimal-pad" value={preco} onChangeText={setPreco}></TextInput>
                 <TextInput style={estilos.entrada} placeholder="Custo (opcional)" keyboardType="decimal-pad" value={custo} onChangeText={setCusto}></TextInput>
                 <TextInput style={estilos.entrada} placeholder="Estoque inicial (opcional)" keyboardType="number-pad" value={estoque} onChangeText={setEstoque}></TextInput>
-                <Botao titulo="Adicionar produto" aoApertar={adicionar}></Botao>
+                <Botao titulo="Adicionar produto" aoApertar={adicionarProduto}></Botao>
             </View>
 
             <Text style={estilos.titulo}>Produtos cadastrados</Text>

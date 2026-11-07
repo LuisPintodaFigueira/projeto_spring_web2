@@ -1,3 +1,9 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, ScrollView, RefreshControl } from 'react-native';
+import * as api from '../api';
+import { estilos, cores } from '../estilos';
+import { formatarMoeda } from '../util';
+
 export default function TelaEStatistica() {
     const [estatistica, setEstatistica] = useState(null);
     const [carregando, setCarregando] = useState(false);
@@ -15,7 +21,7 @@ export default function TelaEStatistica() {
         }
     }, []);
 
-    useInsertionEffect(() => {
+    useEffect(() => {
         carregar();
     }, [carregar]);
 
@@ -30,7 +36,7 @@ export default function TelaEStatistica() {
             <Text style={estilos.titulo}>Estatístiscas</Text>
             {erro !== '' && <Text Style={estilos.erro}>{erro}</Text>}
 
-            {estatisticas && (
+            {estatistica && (
                 <View>
                     <View style={estilos.cartao}>
                         <Text style={estilos.suave}>Quantidade total de vendida</Text>

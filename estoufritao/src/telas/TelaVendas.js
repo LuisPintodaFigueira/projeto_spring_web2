@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, RefreshControl } from 'react-native';
 import { estilos } from '../estilos';
-import { formatarData, formatarMoeda } from '../utils';
+import { formatarData, formatarMoeda } from '../util';
 import * as api from '../api';
 
 export default function TelaVendas() {
