@@ -5,7 +5,7 @@ import Botao from '../componentes/Botao';
 import { estilos } from '../estilos';
 import { formatarMoeda, lerNumero, avisar, confirmar } from '../utils';
 
-function ProdutoItem({produto, aoMudar}) {
+export function ProdutoItem({produto, aoMudar}) {
     const [novoPreco, setNovoPreco] = useState('');
     const [qtdAdicionar, setQtdAdicionar] = useState('');
     async function salvarPreco() {
@@ -81,10 +81,10 @@ function ProdutoItem({produto, aoMudar}) {
 
         </View>
     );
-
 }
 
-export default ProdutosTela() {
+
+export default function ProdutosTela() {
     const [produtos, setProdutos] = useState([]);
     const [carregando, setCarregando] = useState(false);
     const [erro, setErro] = useState('');
@@ -156,5 +156,6 @@ export default ProdutosTela() {
                 <ProdutoItem key={produto.id} produto={produto} aoMudar={carregar}></ProdutoItem>
             ))}
         </ScrollView>
-    )
+
+    );
 }
