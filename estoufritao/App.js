@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StatusBar } from 'react-native';
 import TelaPrincipal from './src/telas/TelaPrincipal';
-import VendasTela from './src/telas/TelaVendas';
 import TelaEstatistica from './src/telas/TelaEstatistica';
 import { cores } from './src/estilos';
 import TelaVendas from './src/telas/TelaVendas';
-import TelaEStatistica from './src/telas/TelaEstatistica';
+import TelaNovaVenda from './src/telas/TelaNovaVenda';
 
 const ABAS = [
   { id: 'produtos', titulo: 'Produtos' },
@@ -19,7 +18,7 @@ export default function App() {
 
   let tela;
   if (abaAtual === 'produtos') tela = <TelaPrincipal></TelaPrincipal>;
-  //else if (abaAtual === 'venda') tela = <NovaVendaTela />;
+  else if (abaAtual === 'venda') tela = <TelaNovaVenda></TelaNovaVenda>;
   else if (abaAtual === 'vendas') tela = <TelaVendas></TelaVendas>;
   else tela = <TelaEstatistica></TelaEstatistica>;
 

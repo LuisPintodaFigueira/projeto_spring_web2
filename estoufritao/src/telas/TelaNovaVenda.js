@@ -1,4 +1,4 @@
-import React, { useSatate, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native'
 import * as api from '../api';
 import Botao from '../componentes/Botao';
@@ -7,7 +7,7 @@ import { formatarMoeda, avisar } from '../util';
 
 export default function NovaVendaTela() {
     const [produtos, setProdutos] = useState([]);
-    const [quantidades, setQuantidades] = userState({});
+    const [quantidades, setQuantidades] = useState({});
     const [carregando, setCarregando] = useState(false);
     const [erro, serErro] = useState('');
 

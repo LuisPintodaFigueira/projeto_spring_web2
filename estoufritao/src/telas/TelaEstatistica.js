@@ -15,9 +15,9 @@ export default function TelaEStatistica() {
         try {
             setEstatistica(await api.buscarEstatisticas());
         } catch (e) {
-            serErro('Não foi possível carregar as estatísticas')
+            setErro('Não foi possível carregar as estatísticas')
         } finally {
-            serCarregando(true);
+            setCarregando(true);
         }
     }, []);
 
