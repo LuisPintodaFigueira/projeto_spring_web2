@@ -1,4 +1,4 @@
-import { Alert, Plataform } from 'react-native';
+import { Alert, Platform } from 'react-native';
 
 export function formatarMoeda(valor) {
     const numero = Number(valor) || 0;
@@ -11,7 +11,7 @@ export function lerNumero(texto) {
     return Number(limpo);
 }
 
-export function fomatarData(dataHora) {
+export function formatarData(dataHora) {
     if(!dataHora) return '';
     let data;
     if (Array.isArray(dataHora)) {

@@ -30,7 +30,7 @@ export default function NovaVendaTela() {
     function mudar(produto, delta) {
         const atual = quantidades[produto.id] || 0;
         const nova = Math.min(Math.max(atual + delta, 0), produto.quantidadeEstoque);
-        setQuantidades({ ...quantidades, [produto]: nova });
+        setQuantidades({ ...quantidades, [produto.id]: nova });
     }
 
     const itens = produtos.filter((p) => (quantidades[p.id] || 0) > 0);

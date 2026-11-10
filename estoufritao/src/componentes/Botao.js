@@ -21,7 +21,7 @@ export default function Botao( {titulo, aoApertar, tipo = 'principal', pequeno, 
             }}
         >
         
-        <Text style={{ color: '#fff', fontweight: 'bold', fontSize: pequeno ? 13 : 15}}>
+        <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: pequeno ? 13 : 15}}>
             {titulo}
         </Text>
 

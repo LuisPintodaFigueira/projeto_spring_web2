@@ -45,42 +45,44 @@ export function ProdutoItem({produto, aoMudar}) {
     }
 
     return (
-        <View style={estilos.cartao}>
+    <View style={estilos.cartao}>
 
-            <Text style={estilos.nome}>{produto.nome}</Text>
-            <Text style={estilos.texto}>
-                Preço: {formatarMoeda(produto.preco)} | custo: {formatarMoeda(produto.custo)}
-            </Text>
-            <Text style={estilos.texto}> Estoque: {produto.quantidade} </Text>
+        <Text style={estilos.nome}>{produto.nome}</Text>
+        <Text style={estilos.texto}>
+            Preço: {formatarMoeda(produto.preco)} | custo: {formatarMoeda(produto.custo)}
+        </Text>
+        <Text style={estilos.texto}> Estoque: {produto.quantidadeEstoque} </Text>
 
-            <View>
-                <TextInput
-                    style={[estilos.entrada, { flex: 1, marginRight: 8, marginBottom: 0 }]}
-                    placeholder="novo preço"
-                    keyboardType="decimal-pad"
-                    value={novoPreco}
-                    onChangeText={setNovoPreco}
-                ></TextInput>
-                <Botao titulo="Alterar preço" pequeno aoAperta={salvarPreco}></Botao>
-            </View>
-
-            <View style={[estilos.linha, { marginTop: 8}]}>
-                <TextInput>
-                    style={[estilos.entrada, { flex: 1, marginRight: 8, marginBottom: 0 }]}
-                    placeholder="quantidade a adicionar"
-                    keyboardType="number-pad"
-                    value={qtdAdicionar}
-                    onChangeText={setQtdAdicionar}
-                </TextInput>
-                <Botao titulo="Adicionar estoque" pequeno aoAperta={salvarEstoque}></Botao>
-            </View>
-
-            <View style={{marginTop: 10}}>
-                <Botão titulo="Excluir produto" tipo="perigo" pequeno aoApertar={excluir}></Botão>
-            </View>
-
+        <View style={[estilos.linha, { marginTop: 8 }]}>
+            <TextInput
+                style={[estilos.entrada, { flex: 1, marginRight: 8, marginBottom: 0 }]}
+                placeholder="novo preço"
+                keyboardType="decimal-pad"
+                value={novoPreco}
+                onChangeText={setNovoPreco}
+            ></TextInput>
+            <Botao titulo="Alterar preço" pequeno aoApertar={salvarPreco}></Botao>
         </View>
+
+        <View style={[estilos.linha, { marginTop: 8 }]}>
+            <TextInput
+                style={[estilos.entrada, { flex: 1, marginRight: 8, marginBottom: 0 }]}
+                placeholder="quantidade a adicionar"
+                keyboardType="number-pad"
+                value={qtdAdicionar}
+                onChangeText={setQtdAdicionar}
+            ></TextInput>
+            <Botao titulo="Adicionar estoque" pequeno aoApertar={salvarEstoque}></Botao>
+        </View>
+
+        <View style={{ marginTop: 10 }}>
+            <Botao titulo="Excluir produto" tipo="perigo" pequeno aoApertar={excluir}></Botao>
+        </View>
+
+    </View>
+    
     );
+
 }
 
 
