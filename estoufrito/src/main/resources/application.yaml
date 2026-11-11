@@ -10,3 +10,13 @@ spring:
   h2:
     console:
       enabled: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/estoufrito
+    username: postgres
+    password: luis2006
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
