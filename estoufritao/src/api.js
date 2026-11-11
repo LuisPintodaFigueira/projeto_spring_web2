@@ -14,10 +14,19 @@ async function requisicao(caminho, metodo = 'GET', corpo) {
     }
 
     const resposta = await fetch(API_URL + caminho, opcoes);
-
     const texto = await resposta.text();
-    return texto ? JSON.parse(texto) : null;
+
+    try {
+        return texto ? JSON.parse(texto) : null;
+    } catch (e) {
+        return texto;
+    }
+
 }
+
+export const logarUsuario = (dados) => requisicao('/v1/usuarios/login', 'POST', dados);
+
+export const cadastrarUsuario = (dados) => requisicao('/v1/usuarios/cadastro', 'POST', dados);
 
 export const listarProdutos = () => requisicao('/v1/produtos');
 

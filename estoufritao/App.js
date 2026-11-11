@@ -5,6 +5,7 @@ import TelaEstatistica from './src/telas/TelaEstatistica';
 import { cores } from './src/estilos';
 import TelaVendas from './src/telas/TelaVendas';
 import TelaNovaVenda from './src/telas/TelaNovaVenda';
+import TelaLogin from './src/telas/TelaLogin';
 
 const ABAS = [
   { id: 'produtos', titulo: 'Produtos' },
@@ -14,7 +15,12 @@ const ABAS = [
 ];
 
 export default function App() {
+  const [logado, setLogado] = useState(false);
   const [abaAtual, setAbaAtual] = useState('produtos');
+
+  if (!logado) {
+    return <TelaLogin aoLogar={() => setLogado(true)} />;
+  }
 
   let tela;
   if (abaAtual === 'produtos') tela = <TelaPrincipal></TelaPrincipal>;
