@@ -9,12 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@RestController 
-@RequestMapping ("/v1/usuarios")
+@RestController
+@RequestMapping("/v1/usuarios")
 public class LoginController {
-    
-    @Autowired 
+
+    @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private JwtService jwtService;
 
     @PostMapping("/cadastro")
     public Usuario cadastrarNovoUsuario(@RequestBody Usuario usuario) {
@@ -25,6 +28,7 @@ public class LoginController {
     @PostMapping("/login")
     public String fazerLogin(@RequestBody Usuario usuario) {
         System.out.println("tentando logar com: " + usuario.getNome());
-        return usuarioService.logar(usuario);
+        Usuario usuarioLogado = usuarioService.logar(usuario);
+        return jwtService.gerarToken(usuarioLogado);
     }
 }

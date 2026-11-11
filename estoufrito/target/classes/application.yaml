@@ -11,10 +11,10 @@ spring:
     console:
       enabled: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/
-    username:
-    password:
-    driver-class-name: org-postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/estoufrito
+    username: postgres
+    password: luis2006
+    driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
