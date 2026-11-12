@@ -22,7 +22,7 @@ public class UsuarioService {
             System.out.println("informe nome e senha");
         }
 
-        if (usuarioRepository.existByNome(usuario.getNome())) {
+        if (usuarioRepository.existsByNome(usuario.getNome())) {
             System.out.println("esse nome já está em uso");
         }
 

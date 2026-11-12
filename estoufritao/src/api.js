@@ -24,9 +24,7 @@ async function requisicao(caminho, metodo = 'GET', corpo) {
 
     const opcoes = {
         method: metodo,
-        headers: {
-            'Content-Type': 'application/json'
-        }
+        headers: cabecalhos
     }
 
     if (corpo !== undefined) {

@@ -9,7 +9,7 @@ export default function NovaVendaTela() {
     const [produtos, setProdutos] = useState([]);
     const [quantidades, setQuantidades] = useState({});
     const [carregando, setCarregando] = useState(false);
-    const [erro, serErro] = useState('');
+    const [erro, setErro] = useState('');
 
     const carregar = useCallback(async () => {
         setCarregando(true);

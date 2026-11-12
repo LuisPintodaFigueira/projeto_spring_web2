@@ -14,6 +14,7 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
-  jwt:
-    secret: ${JWT_SECRET:troque-esta-chave-por-uma-bem-longa-com-mais-de-32-caracteres}
-    expiracao-minutos: 90
+
+jwt:
+  secret: ${JWT_SECRET:troque-esta-chave-por-uma-bem-longa-com-mais-de-32-caracteres}
+  expiracao-minutos: 90

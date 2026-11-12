@@ -6,18 +6,18 @@ import org.springframework.stereotype.Service;
 import br.edu.ifpr.estoufrito.model.Estatistica;
 import br.edu.ifpr.estoufrito.repository.EstatisticaRepository;
 
-@Service 
+@Service
 public class EstatisticaService {
-    
-    @Autowired 
+
+    @Autowired
     private EstatisticaRepository estatisticaRepository;
 
     public Estatistica buscarEstatistica() {
 
-        return estatisticaRepository.findById(1L).orElseGet(() -> {
+        return estatisticaRepository.findById(null).orElseGet(() -> {
             Estatistica novaEstatistica = new Estatistica();
-            
-            novaEstatistica.setId(1L);
+
+            novaEstatistica.setId(null);
 
             return estatisticaRepository.save(novaEstatistica);
         });

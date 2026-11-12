@@ -12,7 +12,7 @@ export function ProdutoItem({produto, aoMudar}) {
         const preco = lerNumero(novoPreco);
         if (isNaN(preco) || preco <= 0) return avisar('preço inválido');
         try {
-            await api.alterarPreco(produto.id, preco);
+            await api.alterarProduto(produto.id, preco);
             setNovoPreco('');
             aoMudar();
         } catch (e) {
@@ -121,7 +121,7 @@ export default function ProdutosTela() {
         if (isNaN(custoNum) || custoNum < 0) return avisar('custo inválido', 'Digite um número maior ou igual a 0');
         if (!Number.isInteger(estoqueNum) || estoqueNum < 0) return avisar('estoque inválido', 'Digite um número inteiro maior ou igual a 0');
         try {
-            await api.adcionarProduto({nome: nome.trim(), preco: precoNum, custo: custoNum, quantidade: estoqueNum});
+            await api.adicionarProduto({nome: nome.trim(), preco: precoNum, custo: custoNum, quantidade: estoqueNum});
             setNome('');
             setPreco('');
             setCusto('');
