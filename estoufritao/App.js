@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StatusBar } from 'react-native';
 import TelaPrincipal from './src/telas/TelaPrincipal';
 import TelaEstatistica from './src/telas/TelaEstatistica';
@@ -6,6 +6,7 @@ import { cores } from './src/estilos';
 import TelaVendas from './src/telas/TelaVendas';
 import TelaNovaVenda from './src/telas/TelaNovaVenda';
 import TelaLogin from './src/telas/TelaLogin';
+import * as api from './src/api';
 
 const ABAS = [
   { id: 'produtos', titulo: 'Produtos' },
@@ -17,6 +18,10 @@ const ABAS = [
 export default function App() {
   const [logado, setLogado] = useState(false);
   const [abaAtual, setAbaAtual] = useState('produtos');
+
+  useEffect(() => {
+    api.registrarAoSessaoExpirar(() => setLogado(false));
+  }, []);
 
   if (!logado) {
     return <TelaLogin aoLogar={() => setLogado(true)} />;

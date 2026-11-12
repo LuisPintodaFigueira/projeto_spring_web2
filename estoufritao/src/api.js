@@ -1,6 +1,26 @@
 import { API_URL } from './config';
 
+let token = null;
+
+let aoSessaoExpirar = null;
+
+export function definirToken(novoToken) {
+    token = novoToken;
+}
+
+export function registrarAoSessaoExpirar(funcao) {
+    aoSessaoExpirar = funcao;
+}
+
 async function requisicao(caminho, metodo = 'GET', corpo) {
+
+    const cabecalhos = {
+        'Content-Type': 'application/json'
+    }
+
+    if (token) {
+        cabecalhos['Authorization'] = 'Bearer ' + token;
+    }
 
     const opcoes = {
         method: metodo,
@@ -14,6 +34,14 @@ async function requisicao(caminho, metodo = 'GET', corpo) {
     }
 
     const resposta = await fetch(API_URL + caminho, opcoes);
+
+    if (resposta.status === 401 && token) {
+        token = null;
+        if (aoSessaoExpirar) {
+            aoSessaoExpirar();
+            throw new Error('Sessão expirada');
+        }
+    }
     const texto = await resposta.text();
 
     try {

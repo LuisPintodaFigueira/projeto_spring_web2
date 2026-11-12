@@ -23,7 +23,8 @@ export default function TelaLogin({ aoLogar }) {
 
             const resultado = await api.logarUsuario({ nome, senha });
 
-            if (resultado === 'Login realizado com sucesso' || resultado === 'Login realizado com sucesso!') {
+            if (typeof resultado === 'string' && resultado !== '') {
+                api.definirToken(resultado);
                 aoLogar();
             } else {
                 setErro(resultado);
@@ -47,9 +48,16 @@ export default function TelaLogin({ aoLogar }) {
 
         try {
 
-            await api.cadastrarUsuario({ nome, senha });
-            avisar('Conta Criada!', 'Agora aperte em Entrar para acessar');
-            setSenha('');
+            const resultado = await api.cadastrarUsuario({ nome, senha });
+
+            if (resultado && resultado.id) {
+              avisar('Conta Criada!', 'Agora aperte em Entrar para acessar');
+              setSenha('');
+            } else {
+              avisar('Erro ao cadastrar', 'Esse nome já pode estar em uso');
+            }
+
+
 
         } catch (e) {
             avisar('Erro ao cadastrar');

@@ -31,7 +31,7 @@ export function formatarData(dataHora) {
 }
 
 export function avisar(titulo, mensagem) {
-    if (Plataform.OS === 'web') {
+    if (Platform.OS === 'web') {
         window.alert(titulo + (mensagem ? '\n' + mensagem : ''));
     } else {
         Alert.alert(titulo, mensagem);
@@ -39,7 +39,7 @@ export function avisar(titulo, mensagem) {
 }
 
 export function confirmar(titulo, mensagem, aoConfirmar) {
-    if(Plataform.OS === 'web') {
+    if(Platform.OS === 'web') {
         if (window.confirm(titulo + '\n' + mensagem)) aoConfirmar();        
     } else {
         Alert.alert(titulo, mensagem, [

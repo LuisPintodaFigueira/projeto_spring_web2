@@ -34,7 +34,7 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public String logar(Usuario usuario) {
+    public Usuario logar(Usuario usuario) {
         if (usuario.getNome() == null || usuario.getSenha() == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nome ou senha inválidos");
         }

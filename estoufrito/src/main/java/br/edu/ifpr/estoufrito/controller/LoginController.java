@@ -2,7 +2,7 @@ package br.edu.ifpr.estoufrito.controller;
 
 import br.edu.ifpr.estoufrito.model.Usuario;
 import br.edu.ifpr.estoufrito.service.UsuarioService;
-
+import br.edu.ifpr.estoufrito.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,5 +1,6 @@
 package br.edu.ifpr.estoufrito.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,6 +14,8 @@ public class Usuario {
     private Long id;
 
     private String nome;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY  )
     private String senha;
 
     public Usuario() {
