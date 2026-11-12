@@ -33,7 +33,7 @@ export function ProdutoItem({produto, aoMudar}) {
     }
 
     async function excluir() {
-        confirmar('remover do estoque', async () => {
+        confirmar('Remover produto', 'Deseja remover ' + produto.nome + ' do estoque?', async () => {
             try {
                 await api.excluirProduto(produto.id);
                 aoMudar();
@@ -121,7 +121,7 @@ export default function ProdutosTela() {
         if (isNaN(custoNum) || custoNum < 0) return avisar('custo inválido', 'Digite um número maior ou igual a 0');
         if (!Number.isInteger(estoqueNum) || estoqueNum < 0) return avisar('estoque inválido', 'Digite um número inteiro maior ou igual a 0');
         try {
-            await api.adicionarProduto({nome: nome.trim(), preco: precoNum, custo: custoNum, quantidade: estoqueNum});
+            await api.adicionarProduto({nome: nome.trim(), preco: precoNum, custo: custoNum, quantidadeEstoque: estoqueNum});
             setNome('');
             setPreco('');
             setCusto('');

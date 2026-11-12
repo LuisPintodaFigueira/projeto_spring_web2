@@ -14,11 +14,8 @@ public class EstatisticaService {
 
     public Estatistica buscarEstatistica() {
 
-        return estatisticaRepository.findById(null).orElseGet(() -> {
+        return estatisticaRepository.findAll().stream().findFirst().orElseGet(() -> {
             Estatistica novaEstatistica = new Estatistica();
-
-            novaEstatistica.setId(null);
-
             return estatisticaRepository.save(novaEstatistica);
         });
 

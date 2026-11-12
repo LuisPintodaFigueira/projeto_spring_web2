@@ -15,9 +15,11 @@ export default function NovaVendaTela() {
         setCarregando(true);
         setErro('');
         try {
-            setProdutos(await api.listarProdutos())
+            const lista = await api.listarProdutos();
+            console.log(lista[0]);
+            setProdutos(lista);
         } catch (e) {
-            setErro('Não foi possível carregar os produtos')
+            setErro('Não foi possível carregar os produtos');
         } finally {
             setCarregando(false);
         }
@@ -76,7 +78,7 @@ export default function NovaVendaTela() {
 
                             <Text style={estilos.nome}>{p.nome}</Text>
                             <Text style={estilos.texto}>{formatarMoeda(p.preco)}</Text>
-                            <Text style={estilos.suave}>Estoque: {p.quantidadesEstoque}</Text>
+                            <Text style={estilos.suave}>Estoque: {p.quantidadeEstoque}</Text>
 
                         </View>
 
