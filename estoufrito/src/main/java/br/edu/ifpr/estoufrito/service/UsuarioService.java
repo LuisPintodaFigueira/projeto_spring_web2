@@ -17,13 +17,12 @@ public class UsuarioService {
     private BCryptPasswordEncoder criptografia = new BCryptPasswordEncoder();
 
     public Usuario cadastrar(Usuario usuario) {
-        if (usuario.getNome() == null || usuario.getNome().isBlank() || usuario.getSenha() == null
-                || usuario.getSenha().isBlank()) {
-            System.out.println("informe nome e senha");
+        if (usuario.getNome() == null || usuario.getNome().isBlank() || usuario.getSenha() == null || usuario.getSenha().isBlank()) {
+            throw new IllegalArgumentException("Informe nome e senha");
         }
 
         if (usuarioRepository.existsByNome(usuario.getNome())) {
-            System.out.println("esse nome já está em uso");
+            throw new IllegalArgumentException("Esse nome já está em uso");
         }
 
         usuario.setId(null);
