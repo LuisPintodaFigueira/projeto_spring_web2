@@ -1,11 +1,25 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from './config';
+
+const CHAVE_TOKEN = 'estoufrito_token';
 
 let token = null;
 
 let aoSessaoExpirar = null;
 
-export function definirToken(novoToken) {
+export async function definirToken(novoToken) {
     token = novoToken;
+    if (novoToken) {
+        await AsyncStorage.setItem(CHAVE_TOKEN, novoToken);
+    } else {
+        await AsyncStorage.removeItem(CHAVE_TOKEN);
+    }
+}
+
+export async function carregarTokenSalvo() {
+    const salvo = await AsyncStorage.getItem(CHAVE_ITEM);
+    token = salvo;
+    return salvo !== null;
 }
 
 export function registrarAoSessaoExpirar(funcao) {
@@ -34,7 +48,7 @@ async function requisicao(caminho, metodo = 'GET', corpo) {
     const resposta = await fetch(API_URL + caminho, opcoes);
 
     if (resposta.status === 401 && token) {
-        token = null;
+        await definirToken(null);
         if (aoSessaoExpirar) {
             aoSessaoExpirar();
             throw new Error('Sessão expirada');

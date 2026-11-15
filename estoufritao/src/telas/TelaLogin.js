@@ -24,10 +24,10 @@ export default function TelaLogin({ aoLogar }) {
             const resultado = await api.logarUsuario({ nome, senha });
 
             if (typeof resultado === 'string' && resultado !== '') {
-                api.definirToken(resultado);
+                await api.definirToken(resultado);
                 aoLogar();
             } else {
-                setErro(resultado);
+                setErro('Nome ou senha inválidos');
             }
 
         } catch (e) {

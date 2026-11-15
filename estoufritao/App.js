@@ -17,11 +17,32 @@ const ABAS = [
 
 export default function App() {
   const [logado, setLogado] = useState(false);
+  const [verificando, setVerificando] = useState(true);
   const [abaAtual, setAbaAtual] = useState('produtos');
 
   useEffect(() => {
     api.registrarAoSessaoExpirar(() => setLogado(false));
+
+    async function restaurarSessao() {
+      const temToken = await api.carregarTokenSalvo();
+      setLogado(temToken);
+      setVerificando(false);
+    }
+    restaurarSessao();
   }, []);
+
+  async function sair() {
+    await api.definirToken(null);
+    setLogado(false);
+  }
+
+  if (verificando) {                                       // NOVO (item 3)
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   if (!logado) {
     return <TelaLogin aoLogar={() => setLogado(true)} />;
@@ -35,10 +56,15 @@ export default function App() {
 
   return (
     <View style={{ flex: 1, backgroundColor: cores.fundo, paddingTop: 40 }}>
-      <StatusBar barStyle="dark-content" />
-      <Text style={{ fontSize: 22, fontWeight: 'bold', textAlign: 'center', paddingVertical: 8, color: cores.principal }}>
-        EstouFrito
-      </Text>
+
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16 }}>
+        <Text style={{ fontSize: 22, fontWeight: 'bold', color: cores.principal, paddingVertical: 8 }}>
+          EstouFrito
+        </Text>
+        <TouchableOpacity onPress={sair}>
+          <Text style={{ color: cores.suave }}>Sair</Text>
+        </TouchableOpacity>
+      </View>
 
       <View style={{ flex: 1 }}>{tela}</View>
 
