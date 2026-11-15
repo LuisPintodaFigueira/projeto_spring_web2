@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, StatusBar, ActivityIndicator } from 'react-native';
 import TelaPrincipal from './src/telas/TelaPrincipal';
 import TelaEstatistica from './src/telas/TelaEstatistica';
 import { cores } from './src/estilos';
 import TelaVendas from './src/telas/TelaVendas';
-import TelaNovaVenda from './src/telas/TelaNovaVenda';
+import TelaProdutos from './src/telas/TelaProdutos';
 import TelaLogin from './src/telas/TelaLogin';
+import Botao from './src/componentes/Botao';
 import * as api from './src/api';
 
 const ABAS = [
-  { id: 'produtos', titulo: 'Produtos' },
   { id: 'venda', titulo: 'Nova venda' },
+    { id: 'produtos', titulo: 'Produtos' },
   { id: 'vendas', titulo: 'Vendas' },
   { id: 'estatisticas', titulo: 'Estatísticas' },
 ];
@@ -49,8 +50,8 @@ export default function App() {
   }
 
   let tela;
-  if (abaAtual === 'produtos') tela = <TelaPrincipal></TelaPrincipal>;
-  else if (abaAtual === 'venda') tela = <TelaNovaVenda></TelaNovaVenda>;
+  if (abaAtual === 'venda') tela = <TelaPrincipal></TelaPrincipal>;
+  else if (abaAtual === 'produtos') tela = <TelaProdutos></TelaProdutos>;
   else if (abaAtual === 'vendas') tela = <TelaVendas></TelaVendas>;
   else tela = <TelaEstatistica></TelaEstatistica>;
 
@@ -61,9 +62,7 @@ export default function App() {
         <Text style={{ fontSize: 22, fontWeight: 'bold', color: cores.principal, paddingVertical: 8 }}>
           EstouFrito
         </Text>
-        <TouchableOpacity onPress={sair}>
-          <Text style={{ color: cores.suave }}>Sair</Text>
-        </TouchableOpacity>
+        <Botao titulo="Sair" tipo="perigo" pequeno aoApertar={sair} />
       </View>
 
       <View style={{ flex: 1 }}>{tela}</View>

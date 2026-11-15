@@ -17,7 +17,7 @@ export async function definirToken(novoToken) {
 }
 
 export async function carregarTokenSalvo() {
-    const salvo = await AsyncStorage.getItem(CHAVE_ITEM);
+    const salvo = await AsyncStorage.getItem(CHAVE_TOKEN);
     token = salvo;
     return salvo !== null;
 }
