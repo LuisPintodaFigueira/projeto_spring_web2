@@ -1,50 +1,82 @@
 import { Alert, Platform } from 'react-native';
 
 export function formatarMoeda(valor) {
-    const numero = Number(valor) || 0;
-    return 'R$ ' + numero.toFixed(2).replace('.', ',');
+    const valorNumerico = Number(valor) || 0;
+    const valorComDuasCasas = valorNumerico.toFixed(2);
+    const valorComVírgula = valorComDuasCasas.replace('.', ',');
+
+    return 'R$ ' + valorComVirgula;
 }
 
 export function lerNumero(texto) {
-    const limpo = String(texto).trim().replace(',', '.');
-    if (limpo === '') return NaN;
-    return Number(limpo);
+    const textoSemEspacos = String(texto).trim();
+    const textoComPontoDecimal = textoSemEspacos.replace(',', '.');
+
+    if (textoComPontoDecimal === '') {
+        return NaN;
+    }
+
+    return Number(textoComPontoDecimal)
 }
 
 export function formatarData(dataHora) {
     if(!dataHora) return '';
+
     let data;
+
     if (Array.isArray(dataHora)) {
-        const [ano, mes, dia, hora = 0, minuto = 0, segundo = 0] = dataHora;
+        const ano = dataHora[0];
+        const mes = dataHora[1];
+        const dia = dataHora[2];
+        const hora = dataHora[3] || 0;
+        const minuto = dataHora[4] || 0;
+        const segundo = dataHora[5] || 0;
+
         data = new Date(ano, mes -1, dia, hora, minuto, segundo);
     } else {
         data = new Date(dataHora);
     }
 
-    if (isNaN(data.getTime())) return String(dataHora);
-    const dois = (n) => String(n).padStart(2, '0');
-    return (
-        `${dois(data.getDate())}/${dois(data.getMonth() + 1)}/${data.getFullYear()}` +
-        `${dois(data.getHours())}:${dois(data.getMinutes())}`
-    );
-    
+    if (isNaN(data.getTime())) {
+        return String(dataHora);
+    }
+
+    const diaFormatado = String(data.getDate()).padStart(2, '0');
+    const mesFormatado = String(data.getMonth() + 1).padStart(2, '0');
+    const horaFormatada = String(data.getHours()).padStart(2, '0');
+    const minutoFormatado = String(data.getMinutes()).padStart(2, '0');
+
+    return diaFormatado + '/' + mesFormatado + '/' + data.getFullYear() + ' ' + horaFormatada + ':' + minutoFormatado;    
 }
 
 export function avisar(titulo, mensagem) {
     if (Platform.OS === 'web') {
-        window.alert(titulo + (mensagem ? '\n' + mensagem : ''));
-    } else {
-        Alert.alert(titulo, mensagem);
+        let textoDoAviso = titulo;
+
+        if (mensagem) {
+            textoDoAviso = textoDoAviso + '\n' + mensagem;
+        }
+
+        window.alert(textoDoAviso);
+        return;
     }
+
+    Alert.alert(titulo, mensagem);
 }
 
-export function confirmar(titulo, mensagem, aoConfirmar) {
+export function confirmar(titulo, mensagem, funcaoDeConfirmar) {
     if(Platform.OS === 'web') {
-        if (window.confirm(titulo + '\n' + mensagem)) aoConfirmar();        
-    } else {
-        Alert.alert(titulo, mensagem, [
-            { text: 'Cancelar', style: 'cancel' },
-            { text: 'Confirmar', style: 'destructive', onPress: aoConfirmar },            
-        ])
+        const usuarioConfirmou = window.confirm(titulo + '\n' + mensagem);
+
+        if (usuarioConfirmou) {
+            funcaoDeConfirmacao();
+        }
+
+        return;
     }
+
+    Alert.alert(titulo, mensagem, [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Confirmar', style: 'destructive', onPress: funcaoDeConfirmacao },        
+    ]);
 }

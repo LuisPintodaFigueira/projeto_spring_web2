@@ -14,35 +14,34 @@ public class AuthInterceptor implements HandlerInterceptor {
     private JwtService jwtService;
 
     @Override 
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+    public boolean preHandle(HttpServletRequest requisicao, HttpServletResponse resposta, Object controlador) throws Exception{
+        if ("OPTIONS".equalsIgnoreCase(requisicao.getMethod())) {
             return true;
         }
 
-        String cabecalho = request.getHeader("Authorization");
+        String cabecalhoDeAutorizacao = requisicao.getHeader("Authorization");
 
-        if (cabecalho == null || !cabecalho.startsWith("Bearer ")) {
-            negar(response, "Token ausente");
+        if (cabecalhoDeAutorizacao == null || !cabecalhoDeAutorizacao.startsWith("Bearer ")) {
+            enviarErroDeAutenticacao(resposta, "Token ausente");
             return false;
         }
 
-        String token = cabecalho.substring(7);
+        String token = cabecalhoDeAutorizacao.substring(7);
+        Long idDoUsuario = jwtService.validarExtrairId(token);
 
-        Long usuarioId = jwtService.validarExtrairId(token);
-
-        if (usuarioId == null) {
-            negar(response, "Token inválido ou expirado");
+        if (idDoUsuario == null) {
+            enviarErroDeAutenticacao(resposta, "Token inválido ou expirado");
             return false;
         }
 
-        request.setAttribute("usuarioId", usuarioId);
+        requisicao.setAttribute("usuarioId", idDoUsuario);
         return true;
     }
 
-    private void negar(HttpServletResponse response, String mensagem) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write("{\"erro\":\"" + mensagem + "\"}");
+    private void enviarErroDeAutenticacao(HttpServletResponse resposta, String mensagem) throws IOException {
+        resposta.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        resposta.setContentType("application/json;charset=UTF-8");
+        resposta.getWriter().write("{\"erro\":\"" + mensagem + "\"}");
     }
     
 }

@@ -1,9 +1,12 @@
 package br.edu.ifpr.estoufrito.model;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.math.BigDecimal;
 
 @Entity
 public class Estatistica{
@@ -11,7 +14,7 @@ public class Estatistica{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private int quantidadeTotalVendida;
-    private float lucroTotal;
+    private BigDecimal lucroTotal = BigDecimal.ZERO;
 
     public Estatistica() {
     }
@@ -30,10 +33,10 @@ public class Estatistica{
         this.quantidadeTotalVendida = quantidadeTotalVendida;
     }
 
-    public float getLucroTotal() {
+    public BigDecimal getLucroTotal() {
         return lucroTotal;
     }
-    public void setLucroTotal(float lucroTotal) {
+    public void setLucroTotal(BigDecimal lucroTotal) {
         this.lucroTotal = lucroTotal;
     }
 }

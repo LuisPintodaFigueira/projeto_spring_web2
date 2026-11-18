@@ -1,13 +1,14 @@
 package br.edu.ifpr.estoufrito.controller;
 
+import br.edu.ifpr.estoufrito.dto.LoginRequest;
 import br.edu.ifpr.estoufrito.model.Usuario;
-import br.edu.ifpr.estoufrito.service.UsuarioService;
 import br.edu.ifpr.estoufrito.service.JwtService;
+import br.edu.ifpr.estoufrito.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/v1/usuarios")
@@ -19,16 +20,17 @@ public class LoginController {
     @Autowired
     private JwtService jwtService;
 
-    @PostMapping("/cadastro")
-    public Usuario cadastrarNovoUsuario(@RequestBody Usuario usuario) {
-        System.out.println("salvando no banco: " + usuario.getNome());
-        return usuarioService.cadastrar(usuario);
-    }
-
     @PostMapping("/login")
-    public String fazerLogin(@RequestBody Usuario usuario) {
-        System.out.println("tentando logar com: " + usuario.getNome());
-        Usuario usuarioLogado = usuarioService.logar(usuario);
-        return jwtService.gerarToken(usuarioLogado);
+    public String fazerLogin(@RequestBody(required = false) LoginRequest dadosDeLogin) {
+        if (dadosDeLogin == null) {
+            throw new IllegalArgumentException("informe nome e senha");
+        }
+
+        Usuario usuario = new Usuario();
+        usuario.setNome(dadosDeLogin.getNome());
+        usuario.setSenha(dadosDeLogin.getSenha());
+
+        Usuario usuarioAutenticado = usuarioService.logar(usuario);
+        return jwtService.gerarToken(usuarioAutenticado);
     }
 }

@@ -14,34 +14,38 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
     
-    private final SecretKey chave;
+    private final SecretKey chaveDeAssinatura;
 
-    private final long expiracaoMs;
+    private final long tempoDeExpiracaoEmMilisegundos;
 
-    public JwtService(@Value("${jwt.secret}") String segredo, @Value("${jwt.expiracao-minutos:60}") long minutos) {
-        this.chave = Keys.hmacShaKeyFor(segredo.getBytes(StandardCharsets.UTF_8));
-
-        this.expiracaoMs = minutos * 60 * 1000;
+    public JwtService(@Value("${jwt.secret}") String segredo, @Value("${jwt.expiracao-minutos:60}") long minutosAteExpirar) {
+        byte[] segredoEmBytes = segredo.getBytes(StandardCharsets.UTF_8);
+        this.chaveDeAssinatura = Keys.hmacShaKeyFor(segredoEmBytes);
+        this.tempoDeExpiracaoEmMilisegundos = minutosAteExpirar * 60 * 1000;
     }
 
     public String gerarToken(Usuario usuario) {
-        Date agora = new Date();
+        Date horarioAtual = new Date();
+        long horarioDeExpiracao = horarioAtual.getTime() + tempoDeExpiracaoEmMilisegundos;
+        Date dataDeExpiracao = new Date(horarioDeExpiracao);
+
         return Jwts.builder()
                 .subject(String.valueOf(usuario.getId()))
-                .issuedAt(agora)
-                .expiration(new Date(agora.getTime() + expiracaoMs))
-                .signWith(chave)
+                .issuedAt(horarioAtual)
+                .expiration(dataDeExpiracao)
+                .signWith(chaveDeAssinatura)
                 .compact();
     }
 
     public Long validarExtrairId(String token) {
         try {
-            Claims dados = Jwts.parser()
-                    .verifyWith(chave)
+            Claims dadosDoToken = Jwts.parser()
+                    .verifyWith(chaveDeAssinatura)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-            return Long.valueOf(dados.getSubject());
+            String idDoUsuario = dadosDoToken.getSubject();
+            return Long.valueOf(idDoUsuario);
         } catch (JwtException | IllegalArgumentException e) {
             return null;
         }

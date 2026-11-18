@@ -1,5 +1,6 @@
 package br.edu.ifpr.estoufrito.model;
 
+import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,8 +17,8 @@ public class ItemVenda {
     private int produtoId;
     private String nomeProduto;
     private int quantidade;
-    private float precoUnitario;
-    private float custoUnitario;
+    private BigDecimal precoUnitario;
+    private BigDecimal custoUnitario;
 
     @JsonIgnore
     @ManyToOne
@@ -59,19 +60,19 @@ public class ItemVenda {
         this.quantidade = quantidade;
     }
 
-    public float getPrecoUnitario() {
+    public BigDecimal getPrecoUnitario() {
         return precoUnitario;
     }
 
-    public void setPrecoUnitario(float precoUnitario) {
+    public void setPrecoUnitario(BigDecimal precoUnitario) {
         this.precoUnitario = precoUnitario;
     }
 
-    public float getCustoUnitario() {
+    public BigDecimal getCustoUnitario() {
         return custoUnitario;
     }
 
-    public void setCustoUnitario(float custoUnitario) {
+    public void setCustoUnitario(BigDecimal custoUnitario) {
         this.custoUnitario = custoUnitario;
     }
 

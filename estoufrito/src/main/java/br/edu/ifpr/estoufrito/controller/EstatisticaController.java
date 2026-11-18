@@ -15,7 +15,7 @@ public class EstatisticaController {
     private EstatisticaService estatisticaService;
 
     @GetMapping
-    public Estatistica visualizarEstatisticas() {
+    public Estatistica buscarEstatisticas() {
         return estatisticaService.buscarEstatistica();
     }
 }

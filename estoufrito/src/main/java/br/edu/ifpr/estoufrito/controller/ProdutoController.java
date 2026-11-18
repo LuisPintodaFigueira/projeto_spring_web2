@@ -1,18 +1,18 @@
 package br.edu.ifpr.estoufrito.controller;
 
+import br.edu.ifpr.estoufrito.model.Produto;
+import br.edu.ifpr.estoufrito.service.ProdutoService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import br.edu.ifpr.estoufrito.service.ProdutoService;
-import br.edu.ifpr.estoufrito.model.Produto;
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/produtos")
@@ -23,9 +23,6 @@ public class ProdutoController {
 
     @GetMapping
     public List<Produto> verTodosOsProdutos() {
-
-        System.out.println("Listando produtos...");
-
         return produtoService.ListarProdutos();
     }
 
@@ -35,12 +32,20 @@ public class ProdutoController {
     }
 
     @PutMapping("/{id}/preco")
-    public Produto alterarPrecoProduto(@PathVariable Long id, @RequestBody Produto produto) {
+    public Produto alterarPreco(@PathVariable Long id, @RequestBody(required = false) Produto produto) {
+        if (produto == null) {
+            throw new IllegalArgumentException("informe o novo preço");
+        }
+
         return produtoService.alterarPreco(id, produto.getPreco());
     }
 
     @PatchMapping("/{id}/estoque")
-    public Produto adicionarEstoqueProduto(@PathVariable Long id, @RequestBody Produto produto) {
+    public Produto adicionarEstoqueProduto(@PathVariable Long id, @RequestBody(required = false) Produto produto) {
+        if (produto == null) {
+            throw new IllegalArgumentException("informe a quantidade");
+        }
+        
         return produtoService.adicionarEstoque(id, produto.getQuantidadeEstoque());
     }
 

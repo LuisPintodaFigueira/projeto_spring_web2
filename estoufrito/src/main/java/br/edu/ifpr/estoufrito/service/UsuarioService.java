@@ -1,53 +1,72 @@
 package br.edu.ifpr.estoufrito.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import br.edu.ifpr.estoufrito.model.Usuario;
 import br.edu.ifpr.estoufrito.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public class UsuarioService {
+public class UsuarioService implements CommandLineRunner {
+
+    private static final String NOME_DO_USUARIO_FIXO = "luis";
+    private static final String SENHA_DO_USUARIO_FIXO = "123";
 
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    private BCryptPasswordEncoder criptografia = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder codificadorDeSenha = new BCryptPasswordEncoder();
 
-    public Usuario cadastrar(Usuario usuario) {
-        if (usuario.getNome() == null || usuario.getNome().isBlank() || usuario.getSenha() == null || usuario.getSenha().isBlank()) {
-            throw new IllegalArgumentException("Informe nome e senha");
-        }
+    @Override
+    public void run(String... argumentos) {
+        usuarioRepository.deleteAllInBatch();
 
-        if (usuarioRepository.existsByNome(usuario.getNome())) {
-            throw new IllegalArgumentException("Esse nome já está em uso");
-        }
+        Usuario usuarioFixo = new Usuario();
+        usuarioFixo.setNome(NOME_DO_USUARIO_FIXO);
 
-        usuario.setId(null);
+        String senhaCodificada = codificadorDeSenha.encode(SENHA_DO_USUARIO_FIXO);
+        usuarioFixo.setSenha(senhaCodificada);
 
-        String senhaCriptografada = criptografia.encode(usuario.getSenha());
-        usuario.setSenha(senhaCriptografada);
-
-        return usuarioRepository.save(usuario);
+        usuarioRepository.save(usuarioFixo);
     }
 
-    public Usuario logar(Usuario usuario) {
-        if (usuario.getNome() == null || usuario.getSenha() == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nome ou senha inválidos");
+    public Usuario logar(Usuario dadosDeLogin) {
+        validarDadosDeLogin(dadosDeLogin);
+
+        Usuario usuarioSalvo = usuarioRepository.findByNome(dadosDeLogin.getNome());
+
+        if (usuarioSalvo == null) {
+            throw criarErroDeLogin();
         }
 
-        Usuario usuarioDoBanco = usuarioRepository.findByNome(usuario.getNome());
+        String senhaDigitada = dadosDeLogin.getSenha();
+        String senhaSalva = usuarioSalvo.getSenha();
+        boolean senhaEstaCorreta = codificadorDeSenha.matches(senhaDigitada,senhaSalva);
 
-        if (usuarioDoBanco == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nome ou senha inválidos");
+        if (!senhaEstaCorreta) {
+            throw criarErroDeLogin();
         }
 
-        if (!criptografia.matches(usuario.getSenha(), usuarioDoBanco.getSenha())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nome ou senha inválidos");
+        return usuarioSalvo;
+    }
+
+    private void validarDadosDeLogin(Usuario dadosDeLogin) {
+        if (dadosDeLogin == null) {
+            throw criarErroDeLogin();
         }
 
-        return usuarioDoBanco;
+        String nomeDigitado = dadosDeLogin.getNome();
+        String senhaDigitada = dadosDeLogin.getSenha();
+
+        if (nomeDigitado == null || nomeDigitado.isBlank() || senhaDigitada == null || senhaDigitada.isBlank()) {
+            throw criarErroDeLogin();
+        }
+    }
+
+    private ResponseStatusException criarErroDeLogin() {
+        return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "nome ou senha inválidos");
     }
 }
