@@ -6,24 +6,27 @@ import { formatarMoeda } from '../util';
 
 export default function TelaEStatistica() {
     const [estatistica, setEstatistica] = useState(null);
-    const [carregando, setCarregando] = useState(false);
-    const [erro, setErro] = useState('');
+    const [carregando, setCarregando] = useState(true);
+    const [MensagemDeErro, setMensagemDeErro] = useState('');
 
-    const carregar = useCallback(async () => {
-        setCarregando(true);
-        setErro('');
+    async function carregarEstatisticas() {
         try {
-            setEstatistica(await api.buscarEstatisticas());
-        } catch (e) {
-            setErro('Não foi possível carregar as estatísticas')
+            const dadosRecebidos = await api.buscarEstatisticas();
+            setEstatistica(dadosRecebidos);
+            setMensagemDeErro('');
+        } catch {
+            setMensagemDeErro('Não foi possível carregar as estatísticas')
         } finally {
-            setCarregando(true);
+            setCarregando(false);
         }
-    }, []);
+    }
 
-    useEffect(() => {
-        carregar();
-    }, [carregar]);
+    function atualizarEstatisticas() {
+        setCarregando(true);
+        carregarEstatisticas();
+    }
+
+    useEffect(function carregarAoAbrirTela())
 
     return (
         <ScrollView
