@@ -3,27 +3,53 @@ import { API_URL } from './config';
 
 const CHAVE_TOKEN = 'estoufrito_token';
 
-let token = null;
+let tokenAtual = null;
+let funcaoExecutadaQuandoSessaoExpirar = null;
 
-let aoSessaoExpirar = null;
+export async function salvarTokenNoDispositivo(novoToken) {
+    if(Platform.OS === 'web') {
+        await AsyncStorage.setItem(CHAVE_TOKEN, novoToken);
+        return
+    }
+
+    await SecureStore.setItemAsync(CHAVE_TOKEN, novoToken);
+}
+
+export async function lerTokenDoDispositivo() {
+    if (Platform.OS === 'web') {
+        return await AsyncStorage.getItem(CHAVE_DO_TOKEN);
+    }
+
+    return await SecureStore.getItemAsync(CHAVE_DO_TOKEN);
+}
+
+async function apagarTokenDoDispositivo() {
+    if (Platform.OS === 'web') {
+        await AsyncStorage.removeItem(CHAVE_DO_TOKEN);
+        return;
+    }
+
+    await SecureStore.deleteItemAsync(CHAVE_DO_TOKEN);
+}
 
 export async function definirToken(novoToken) {
-    token = novoToken;
+    tokenAtual = novoToken;
+
     if (novoToken) {
-        await AsyncStorage.setItem(CHAVE_TOKEN, novoToken);
+        await salvarTokenNoDispositivo(novoToken);
     } else {
-        await AsyncStorage.removeItem(CHAVE_TOKEN);
+        await apagarTokenDoDispositivo();
     }
 }
 
-export async function carregarTokenSalvo() {
-    const salvo = await AsyncStorage.getItem(CHAVE_TOKEN);
-    token = salvo;
-    return salvo !== null;
+export function registrarAoSessaoExpirar(funcao) {
+    funcaoExecutadaQuandoSessaoExpirar = funcao;
 }
 
-export function registrarAoSessaoExpirar(funcao) {
-    aoSessaoExpirar = funcao;
+export async function carregarTokenSalvo() {
+    const tokenSalvo = await lerTokenDoDispositivo();
+    tokenAtual = tokenSalvo;
+    return tokenSalvo !== null;
 }
 
 async function requisicao(caminho, metodo = 'GET', corpo) {
@@ -32,47 +58,62 @@ async function requisicao(caminho, metodo = 'GET', corpo) {
         'Content-Type': 'application/json'
     }
 
-    if (token) {
-        cabecalhos['Authorization'] = 'Bearer ' + token;
+    if (tokenAtual) {
+        cabecalhos.Authorization = 'Bearer ' + tokenAtual;
     }
 
-    const opcoes = {
+    const opcoesDaRequisicao = {
         method: metodo,
         headers: cabecalhos
     }
 
     if (corpo !== undefined) {
-        opcoes.body = JSON.stringify(corpo);
+        opcoesDaRequisicao.body = JSON.stringify(corpo);
     }
 
-    const resposta = await fetch(API_URL + caminho, opcoes);
+    const resposta = await fetch(API_URL + caminho, opcoesDaRequisicao);
 
     if (resposta.status === 401 && token) {
         await definirToken(null);
-        if (aoSessaoExpirar) {
-            aoSessaoExpirar();
-            throw new Error('Sessão expirada');
+
+        if (funcaoExecutadaQuandoSessaoExpirar) {
+            funcaoExecutadaQuandoSessaoExpirar();
         }
+
     }
-    const texto = await resposta.text();
+    const textoDaResposta = await resposta.text();
+    let dadosDaResposta;
 
     try {
-        return texto ? JSON.parse(texto) : null;
+        dadosDaResposta = textoDaResposta ? JSON.parse(textoDaResposta) : null;
     } catch (e) {
-        return texto;
+        dadosDaResposta = textoDaResposta;
     }
 
+    if (!resposta.ok) {
+        let mensagem = 'erro HTTP ' + resposta.status;
+
+        if (dadosDaResposta && dadosDaResposta.erro) {
+            mensagem = dadosDaResposta.erro;
+        } else if (dadosDaResposta && dadosDaResposta.message) {
+            mensagem = dadosDaResposta.mensage
+        }
+
+        const erro = new Error(mensagem);
+        erro.status = resposta.status;
+        throw erro;
+    }
+
+    return dadosDaResposta;
 }
 
-export const logarUsuario = (dados) => requisicao('/v1/usuarios/login', 'POST', dados);
-
-export const cadastrarUsuario = (dados) => requisicao('/v1/usuarios/cadastro', 'POST', dados);
+export const logarUsuario = (dadosDelogin) => requisicao('/v1/usuarios/login', 'POST', dadosDelogin);
 
 export const listarProdutos = () => requisicao('/v1/produtos');
 
 export const adicionarProduto = (produto) => requisicao('/v1/produtos', 'POST', produto);
 
-export const alterarProduto = (id, preco) => requisicao(`/v1/produtos/${id}/preco`, 'PUT', { preco });
+export const alterarProduto = (idDoProduto, novoPreco) => requisicao(`/v1/produtos/${idDoProduto}/preco`, 'PUT', { novoPreco });
 
 export const adicionarEstoque = (id, quantidadeEstoque) => requisicao(`/v1/produtos/${id}/estoque`, 'PATCH', { quantidadeEstoque });
 
