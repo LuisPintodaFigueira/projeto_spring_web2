@@ -1,110 +1,344 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native'
+import React, { useEffect, useState } from 'react';
+import {
+    RefreshControl,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import * as api from '../api';
 import Botao from '../componentes/Botao';
-import { estilos, cores } from '../estilos';
-import { formatarMoeda, avisar } from '../util';
+import { cores, estilos } from '../estilos';
+import { avisar, formatarMoeda } from '../util';
 
-export default function NovaVendaTela() {
-    const [produtos, setProdutos] = useState([]);
-    const [quantidades, setQuantidades] = useState({});
-    const [carregando, setCarregando] = useState(false);
-    const [erro, setErro] = useState('');
+const TODAS_AS_CATEGORIAS = 'TODAS';
 
-    const carregar = useCallback(async () => {
-        setCarregando(true);
-        setErro('');
+export default function TelaPrincipal() {
+    const [listaDeProdutos, setListaDeProdutos] = useState([]);
+    const [listaDeCategorias, setListaDeCategorias] = useState([]);
+    const [categoriaSelecionada, setCategoriaSelecionada] = useState(TODAS_AS_CATEGORIAS);
+    const [quantidadesPorProduto, setQuantidadesPorProduto] = useState({});
+    const [estaCarregando, setEstaCarregando] = useState(true);
+    const [mensagemDeErro, setMensagemDeErro] = useState('');
+
+    async function carregarProdutos() {
         try {
-            const lista = await api.listarProdutos();
-            console.log(lista[0]);
-            setProdutos(lista);
-        } catch (e) {
-            setErro('Não foi possível carregar os produtos');
+            const produtosRecebidos = await api.listarProdutos();
+            setListaDeProdutos(produtosRecebidos);
+            setMensagemDeErro('');
+        } catch {
+            setMensagemDeErro('Não foi possível carregar os produtos.');
         } finally {
-            setCarregando(false);
+            setEstaCarregando(false);
         }
-    }, []);
-
-    useEffect (() => {
-        carregar();
-    }, [carregar]);
-
-    function mudar(produto, delta) {
-        const atual = quantidades[produto.id] || 0;
-        const nova = Math.min(Math.max(atual + delta, 0), produto.quantidadeEstoque);
-        setQuantidades({ ...quantidades, [produto.id]: nova });
     }
 
-    const itens = produtos.filter((p) => (quantidades[p.id] || 0) > 0);
-    const total = itens.reduce((soma, p) => soma + p.preco * quantidades[p.id], 0);
+    useEffect(function carregarProdutosECategoriasAoAbrirTela() {
+        Promise.all([api.listarProdutos(), api.listarCategorias()])
+            .then(function receberProdutosECategorias(respostas) {
+                setListaDeProdutos(respostas[0]);
+                setListaDeCategorias(respostas[1]);
+                setMensagemDeErro('');
+            })
+            .catch(function mostrarErroAoCarregar() {
+                setMensagemDeErro('Não foi possível carregar os produtos e as categorias.');
+            })
+            .finally(function encerrarCarregamentoInicial() {
+                setEstaCarregando(false);
+            });
+    }, []);
 
-    async function finalizar() {
-        if (itens.length === 0) return avisar('Pedido vazio', 'Escolha ao menos um produto');
-        try {
-            const venda = await api.realizarVenda(
-                itens.map((p) => ({ produtoId: p.id, quantidade: quantidades[p.id] }))
+    function alterarQuantidadeDoProduto(produto, diferenca) {
+        setQuantidadesPorProduto(function atualizarQuantidades(quantidadesAtuais) {
+            const quantidadeAtual = quantidadesAtuais[produto.id] || 0;
+            const novaQuantidade = Math.min(
+                Math.max(quantidadeAtual + diferenca, 0),
+                produto.quantidadeEstoque
             );
-            avisar('Venda realizada!', `Total: ${formatarMoeda(venda ? venda.totalVendido : total)}`);
-            setQuantidades({});
-            carregar();
-        } catch (e) {
-            avisar('erro ao finalizar');
+
+            return {
+                ...quantidadesAtuais,
+                [produto.id]: novaQuantidade,
+            };
+        });
+    }
+
+    function atualizarProdutos() {
+        setEstaCarregando(true);
+        carregarProdutosECategorias();
+    }
+
+    async function carregarProdutosECategorias() {
+        try {
+            const respostas = await Promise.all([
+                api.listarProdutos(),
+                api.listarCategorias(),
+            ]);
+
+            setListaDeProdutos(respostas[0]);
+            setListaDeCategorias(respostas[1]);
+            setMensagemDeErro('');
+        } catch {
+            setMensagemDeErro('Não foi possível atualizar os produtos e as categorias.');
+        } finally {
+            setEstaCarregando(false);
         }
+    }
+
+    function criarListaDeItensSelecionados() {
+        const itensSelecionados = [];
+
+        for (let indice = 0; indice < listaDeProdutos.length; indice += 1) {
+            const produto = listaDeProdutos[indice];
+            const quantidade = quantidadesPorProduto[produto.id] || 0;
+
+            if (quantidade > 0) {
+                itensSelecionados.push({
+                    produto: produto,
+                    quantidade: quantidade,
+                });
+            }
+        }
+
+        return itensSelecionados;
+    }
+
+    function calcularTotalDaVenda(itensSelecionados) {
+        let total = 0;
+
+        for (let indice = 0; indice < itensSelecionados.length; indice += 1) {
+            const item = itensSelecionados[indice];
+            total += item.produto.preco * item.quantidade;
+        }
+
+        return total;
+    }
+
+    async function finalizarVenda() {
+        const itensSelecionados = criarListaDeItensSelecionados();
+
+        if (itensSelecionados.length === 0) {
+            avisar('Pedido vazio', 'Escolha ao menos um produto.');
+            return;
+        }
+
+        const itensParaEnviar = [];
+
+        for (let indice = 0; indice < itensSelecionados.length; indice += 1) {
+            const item = itensSelecionados[indice];
+            itensParaEnviar.push({
+                produtoId: item.produto.id,
+                quantidade: item.quantidade,
+            });
+        }
+
+        try {
+            const vendaCriada = await api.realizarVenda(itensParaEnviar);
+            const totalDaVenda = vendaCriada
+                ? vendaCriada.totalVendido
+                : calcularTotalDaVenda(itensSelecionados);
+
+            avisar('Venda realizada!', 'Total: ' + formatarMoeda(totalDaVenda));
+            setQuantidadesPorProduto({});
+            carregarProdutos();
+        } catch {
+            avisar('Erro ao finalizar a venda.');
+        }
+    }
+
+    function mostrarCategoria(categoria) {
+        const estaSelecionada = categoriaSelecionada === categoria.nome;
+        let estiloDoBotao = estiloBotaoCategoria;
+        let estiloDoTexto = estiloTextoCategoria;
+
+        if (estaSelecionada) {
+            estiloDoBotao = [estiloBotaoCategoria, estiloBotaoCategoriaSelecionado];
+            estiloDoTexto = estiloTextoCategoriaSelecionado;
+        }
+
+        return (
+            <TouchableOpacity
+                key={categoria.id}
+                style={estiloDoBotao}
+                onPress={function selecionarCategoria() {
+                    setCategoriaSelecionada(categoria.nome);
+                }}
+            >
+                <Text style={estiloDoTexto}>{categoria.nome}</Text>
+            </TouchableOpacity>
+        );
+    }
+
+    function mostrarProduto(produto) {
+        const quantidadeSelecionada = quantidadesPorProduto[produto.id] || 0;
+
+        return (
+            <View key={produto.id} style={[estilos.cartao, estilos.linha]}>
+                <View style={{ flex: 1 }}>
+                    <Text style={estilos.nome}>{produto.nome}</Text>
+                    <Text style={estilos.suave}>
+                        Categoria: {produto.categoria || 'Sem categoria'}
+                    </Text>
+                    <Text style={estilos.texto}>{formatarMoeda(produto.preco)}</Text>
+                    <Text style={estilos.suave}>Estoque: {produto.quantidadeEstoque}</Text>
+                </View>
+
+                <TouchableOpacity
+                    onPress={function diminuirQuantidade() {
+                        alterarQuantidadeDoProduto(produto, -1);
+                    }}
+                    style={estiloBotaoRedondo}
+                >
+                    <Text style={estiloTextoRedondo}>-</Text>
+                </TouchableOpacity>
+
+                <Text style={estiloQuantidade}>{quantidadeSelecionada}</Text>
+
+                <TouchableOpacity
+                    onPress={function aumentarQuantidade() {
+                        alterarQuantidadeDoProduto(produto, 1);
+                    }}
+                    style={estiloBotaoRedondo}
+                >
+                    <Text style={estiloTextoRedondo}>+</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
+    const itensSelecionados = criarListaDeItensSelecionados();
+    const totalDaVenda = calcularTotalDaVenda(itensSelecionados);
+    const produtosVisiveis = [];
+
+    for (let indice = 0; indice < listaDeProdutos.length; indice += 1) {
+        const produto = listaDeProdutos[indice];
+        const mostrarTodasAsCategorias = categoriaSelecionada === TODAS_AS_CATEGORIAS;
+        const produtoPertenceACategoria = produto.categoria === categoriaSelecionada;
+
+        if (mostrarTodasAsCategorias || produtoPertenceACategoria) {
+            produtosVisiveis.push(produto);
+        }
+    }
+
+    let estiloDoBotaoTodas = estiloBotaoCategoria;
+    let estiloDoTextoTodas = estiloTextoCategoria;
+
+    if (categoriaSelecionada === TODAS_AS_CATEGORIAS) {
+        estiloDoBotaoTodas = [estiloBotaoCategoria, estiloBotaoCategoriaSelecionado];
+        estiloDoTextoTodas = estiloTextoCategoriaSelecionado;
     }
 
     return (
+        <View style={estilos.tela}>
+            <View style={estiloCabecalhoCategorias}>
+                <Text style={estilos.titulo}>Produtos por categoria</Text>
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={estiloListaDeCategorias}
+                >
+                    <TouchableOpacity
+                        style={estiloDoBotaoTodas}
+                        onPress={function mostrarTodasAsCategorias() {
+                            setCategoriaSelecionada(TODAS_AS_CATEGORIAS);
+                        }}
+                    >
+                        <Text style={estiloDoTextoTodas}>Todas</Text>
+                    </TouchableOpacity>
 
-        <ScrollView
-        
-        style={estilos.tela}
-        contentContainerStyle={estilos.conteudo}
-        refreshControl={<RefreshControl refreshing={carregando} onRefresh={carregar}></RefreshControl>}
-        
-        >
+                    {listaDeCategorias.map(mostrarCategoria)}
+                </ScrollView>
+            </View>
 
-            <Text Style={estilos.titulo}>Nova Venda</Text>
-            {erro !== '' && <Text style={estilos.erro}>{erro}</Text>}
-            {produtos.length === 0 && erro === '' && !carregando && (
-                <Text style={estilos.vazios}>Cadastre produtos na aba Produtos</Text>
-            )}
+            <ScrollView
+                style={estiloConteudoDaVenda}
+                contentContainerStyle={estilos.conteudo}
+                refreshControl={
+                    <RefreshControl refreshing={estaCarregando} onRefresh={atualizarProdutos} />
+                }
+            >
+                <Text style={estilos.titulo}>Nova venda</Text>
 
-            {produtos.map((p) => {
-                const qtd = quantidades[p.id] || 0;
+                {mensagemDeErro !== '' && (
+                    <Text style={estilos.erro}>{mensagemDeErro}</Text>
+                )}
 
-                return(
-                    <View key={p.id} style={[estilos.cartao, estilos.linha]}>
+                {produtosVisiveis.length === 0 && mensagemDeErro === '' && !estaCarregando && (
+                    <Text style={estilos.vazio}>Nenhum produto nesta categoria.</Text>
+                )}
 
-                        <View style={{ flex: 1 }}>
+                {produtosVisiveis.map(mostrarProduto)}
 
-                            <Text style={estilos.nome}>{p.nome}</Text>
-                            <Text style={estilos.texto}>{formatarMoeda(p.preco)}</Text>
-                            <Text style={estilos.suave}>Estoque: {p.quantidadeEstoque}</Text>
-
-                        </View>
-
-                        <TouchableOpacity onPress={() => mudar(p, -1)} style={botaoRedondo}>
-                            <Text style={textoRedondo}>-</Text>
-                        </TouchableOpacity>
-
-                        <Text style={{ width: 32, textAlign: 'center', fontSize: 16}}>{qtd}</Text>
-
-                        <TouchableOpacity onPress={() => mudar(p, 1)} style={botaoRedondo}>
-                            <Text style={textoRedondo}>+</Text>
-                        </TouchableOpacity>
-
-                    </View>
-                );
-            })}
-
-            <Text style={[estilos.titulo, { marginTop: 8 }]}>Total: {formatarMoeda(total)}</Text>
-            <Botao titulo="Finalizar Venda" aoApertar={finalizar} desativado={itens.length === 0}></Botao>
-
-        </ScrollView>
+                <Text style={[estilos.titulo, { marginTop: 8 }]}>Total: {formatarMoeda(totalDaVenda)}</Text>
+                <Botao
+                    titulo="Finalizar venda"
+                    aoApertar={finalizarVenda}
+                    desativado={itensSelecionados.length === 0}
+                />
+            </ScrollView>
+        </View>
     );
-
 }
 
-const botaoRedondo = {
-  width: 36, height: 36, borderRadius: 18, backgroundColor: cores.principal, alignItems: 'center', justifyContent: 'center'
+const estiloCabecalhoCategorias = {
+    backgroundColor: cores.fundo,
+    paddingTop: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: cores.borda,
 };
-const textoRedondo = { color: '#fff', fontSize: 20, fontWeight: 'bold' };
+
+const estiloListaDeCategorias = {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 10,
+};
+
+const estiloBotaoCategoria = {
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    marginRight: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: cores.principal,
+    backgroundColor: '#fff',
+};
+
+const estiloBotaoCategoriaSelecionado = {
+    backgroundColor: cores.principal,
+};
+
+const estiloTextoCategoria = {
+    color: cores.principal,
+    fontWeight: 'bold',
+};
+
+const estiloTextoCategoriaSelecionado = {
+    color: '#fff',
+    fontWeight: 'bold',
+};
+
+const estiloConteudoDaVenda = {
+    flex: 1,
+};
+
+const estiloBotaoRedondo = {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: cores.principal,
+    alignItems: 'center',
+    justifyContent: 'center',
+};
+
+const estiloTextoRedondo = {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+};
+
+const estiloQuantidade = {
+    width: 32,
+    textAlign: 'center',
+    fontSize: 16,
+};

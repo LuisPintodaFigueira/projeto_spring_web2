@@ -1,62 +1,88 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, ScrollView, RefreshControl } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { RefreshControl, ScrollView, Text, View } from 'react-native';
+import * as api from '../api';
 import { estilos } from '../estilos';
 import { formatarData, formatarMoeda } from '../util';
-import * as api from '../api';
 
 export default function TelaVendas() {
-    const [vendas, setVendas] = useState([]);
-    const [carregando, setCarregando] = useState(false);
-    const [erro, setErro] = useState('');
+    const [listaDeVendas, setListaDeVendas] = useState([]);
+    const [estaCarregando, setEstaCarregando] = useState(true);
+    const [mensagemDeErro, setMensagemDeErro] = useState('');
 
-    const carregar = useCallback(async () => {
-        setCarregando(true);
-        setErro('');
+    async function carregarVendas() {
         try {
-            const lista = await api.listarVendas();
-            setVendas([...lista].reverse());
-        } catch (error) {
-            setErro('Erro ao carregar vendas.');
+            const vendasRecebidas = await api.listarVendas();
+            setListaDeVendas(vendasRecebidas);
+            setMensagemDeErro('');
+        } catch {
+            setMensagemDeErro('Não foi possível carregar as vendas.');
         } finally {
-            setCarregando(false);
+            setEstaCarregando(false);
         }
+    }
+
+    useEffect(function carregarAoAbrirTela() {
+        api.listarVendas()
+            .then(function receberVendas(vendasRecebidas) {
+                setListaDeVendas(vendasRecebidas);
+                setMensagemDeErro('');
+            })
+            .catch(function mostrarErroDeVendas() {
+                setMensagemDeErro('Não foi possível carregar as vendas.');
+            })
+            .finally(function encerrarCarregamento() {
+                setEstaCarregando(false);
+            });
     }, []);
 
-    useEffect(() => {
-        carregar();
-    }, [carregar]);
+    function mostrarVenda(venda) {
+        function mostrarItem(item) {
+            return (
+                <Text key={item.id} style={estilos.suave}>
+                    {item.quantidade} x {item.nomeProduto} - {formatarMoeda(item.precoUnitario)}
+                </Text>
+            );
+        }
+
+        return (
+            <View key={venda.id} style={estilos.cartao}>
+                <Text style={estilos.nome}>Venda #{venda.id}</Text>
+                <Text style={estilos.suave}>{formatarData(venda.dataHora)}</Text>
+                <Text style={estilos.texto}>
+                    Total: {formatarMoeda(venda.totalVendido)}
+                    {' | '}
+                    Lucro: {formatarMoeda(venda.lucroTotal)}
+                </Text>
+
+                {(venda.itensVenda || []).map(mostrarItem)}
+            </View>
+        );
+    }
+
+    function atualizarVendas() {
+        setEstaCarregando(true);
+        carregarVendas();
+    }
 
     return (
-        <ScrollView 
-
+        <ScrollView
             style={estilos.tela}
             contentContainerStyle={estilos.conteudo}
-            refreshControl={<RefreshControl refreshing={carregando} onRefresh={carregar}></RefreshControl>}
-        
+            refreshControl={
+                <RefreshControl refreshing={estaCarregando} onRefresh={atualizarVendas} />
+            }
         >
             <Text style={estilos.titulo}>Vendas realizadas</Text>
-            {erro !== '' && <Text style={estilos.erro}>{erro}</Text>}
-            {vendas.length === 0 && erro === '' && !carregando && (
-                <Text style={estilos.vazio}>Nenhuma venda registrada</Text>
+
+            {mensagemDeErro !== '' && (
+                <Text style={estilos.erro}>{mensagemDeErro}</Text>
             )}
 
-            {vendas.map((venda) => (
-                <View key={venda.id} style={estilos.cartao}>
-                    <Text style={estilos.nome}>Venda #{venda.id}</Text>
-                    <Text style={estilos.suave}>{formatarData(venda.dataHora)}</Text>
-                    <Text style={estilos.texto}>
-                        Total: {formatarMoeda(venda.totalVendido)} | Lucro: {formatarMoeda(venda.lucroTotal)}
-                    </Text>
+            {listaDeVendas.length === 0 && mensagemDeErro === '' && !estaCarregando && (
+                <Text style={estilos.vazio}>Nenhuma venda registrada.</Text>
+            )}
 
-                    {(venda.itensVenda || []).map((item) => (
-                        <Text key={item.id} style={estilos.suave}>
-                            • {item.quantidade} x {item.nomeProduto} - ({formatarMoeda(item.precoUnitario)})
-                        </Text>
-                    ))}
-
-                </View>
-            ))}
-            
+            {listaDeVendas.map(mostrarVenda)}
         </ScrollView>
     );
 }

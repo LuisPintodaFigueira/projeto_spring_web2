@@ -1,113 +1,84 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView } from 'react-native';
+import { ScrollView, Text, TextInput, View } from 'react-native';
 import * as api from '../api';
 import Botao from '../componentes/Botao';
 import { estilos } from '../estilos';
-import { avisar } from '../util';
 
-export default function TelaLogin({ aoLogar }) {
-    const [nome, setNome] = useState('');
-    const [senha, setSenha] = useState('');
-    const [carregando, setCarregando] = useState(false);
-    const [erro, setErro] = useState('');
+export default function TelaLogin(props) {
+    const [nomeDoUsuario, setNomeDoUsuario] = useState('luis');
+    const [senhaDoUsuario, setSenhaDoUsuario] = useState('123');
+    const [estaCarregando, setEstaCarregando] = useState(false);
+    const [mensagemDeErro, setMensagemDeErro] = useState('');
 
-    async function entrar() {
-        if (nome === '' || senha === '') {
-            return avisar('Campos vazios', 'preencha o nome e a senha');
+    async function entrarNaConta() {
+        if (nomeDoUsuario === '' || senhaDoUsuario === '') {
+            setMensagemDeErro('Preencha o nome e a senha.');
+            return;
         }
 
-        setCarregando(true);
-        setErro('');
+        setEstaCarregando(true);
+        setMensagemDeErro('');
 
         try {
+            const tokenRecebido = await api.logarUsuario({
+                nome: nomeDoUsuario,
+                senha: senhaDoUsuario,
+            });
 
-            const resultado = await api.logarUsuario({ nome, senha });
-
-            if (typeof resultado === 'string' && resultado !== '') {
-                await api.definirToken(resultado);
-                aoLogar();
-            } else {
-                setErro('Nome ou senha inválidos');
+            if (typeof tokenRecebido !== 'string' || tokenRecebido === '') {
+                setMensagemDeErro('Nome ou senha inválidos.');
+                return;
             }
 
-        } catch (e) {
-            setErro('não foi possível conectar ao servidor');
-        } finally {
-            setCarregando(false);
-        }
-
-    }
-
-    async function cadastrar() {
-        if (nome === '' || senha === '') {
-            return avisar('Campos vazios', 'Digite um nome e uma senha para criar a conta');
-        }
-
-        setCarregando(true);
-        setErro('');
-
-        try {
-
-            const resultado = await api.cadastrarUsuario({ nome, senha });
-
-            if (resultado && resultado.id) {
-              avisar('Conta Criada!', 'Agora aperte em Entrar para acessar');
-              setSenha('');
+            await api.definirToken(tokenRecebido);
+            props.aoLogar();
+        } catch (erro) {
+            if (erro.status === 401) {
+                setMensagemDeErro('Nome ou senha inválidos.');
             } else {
-              avisar('Erro ao cadastrar', 'Esse nome já pode estar em uso');
+                setMensagemDeErro('Não foi possível conectar ao servidor.');
             }
-
-
-
-        } catch (e) {
-            avisar('Erro ao cadastrar');
         } finally {
-            setCarregando(false);
+            setEstaCarregando(false);
         }
     }
 
-      return (
-    <ScrollView
-      style={estilos.tela}
-      contentContainerStyle={[estilos.conteudo, { justifyContent: 'center', flexGrow: 1 }]}
-    >
-      <Text style={estilos.titulo}>Acesso ao Sistema</Text>
+    return (
+        <ScrollView
+            style={estilos.tela}
+            contentContainerStyle={[estilos.conteudo, { justifyContent: 'center', flexGrow: 1 }]}
+        >
+            <Text style={estilos.titulo}>Acesso ao Sistema</Text>
 
-      {erro !== '' && <Text style={estilos.erro}>{erro}</Text>}
+            {mensagemDeErro !== '' && (
+                <Text style={estilos.erro}>{mensagemDeErro}</Text>
+            )}
 
-      <View style={estilos.cartao}>
-        <Text style={estilos.texto}>Nome</Text>
-        <TextInput
-          style={estilos.entrada}
-          placeholder="Digite seu nome"
-          value={nome}
-          onChangeText={setNome}
-          autoCapitalize="none"
-        />
+            <View style={estilos.cartao}>
+                <Text style={estilos.texto}>Nome</Text>
+                <TextInput
+                    style={estilos.entrada}
+                    placeholder="Digite seu nome"
+                    value={nomeDoUsuario}
+                    onChangeText={setNomeDoUsuario}
+                    autoCapitalize="none"
+                />
 
-        <Text style={estilos.texto}>Senha</Text>
-        <TextInput
-          style={estilos.entrada}
-          placeholder="Digite sua senha"
-          value={senha}
-          onChangeText={setSenha}
-          secureTextEntry
-        />
-      </View>
+                <Text style={estilos.texto}>Senha</Text>
+                <TextInput
+                    style={estilos.entrada}
+                    placeholder="Digite sua senha"
+                    value={senhaDoUsuario}
+                    onChangeText={setSenhaDoUsuario}
+                    secureTextEntry
+                />
+            </View>
 
-      <Botao
-        titulo="Entrar"
-        aoApertar={entrar}
-        desativado={carregando || nome === '' || senha === ''}
-      />
-
-      <View style={{ marginTop: 8 }}>
-        <Botao
-          titulo="Criar Nova Conta"
-          aoApertar={cadastrar}
-          desativado={carregando || nome === '' || senha === ''}
-        />
-      </View>
-    </ScrollView>
-  );
+            <Botao
+                titulo="Entrar"
+                aoApertar={entrarNaConta}
+                desativado={estaCarregando || nomeDoUsuario === '' || senhaDoUsuario === ''}
+            />
+        </ScrollView>
+    );
 }

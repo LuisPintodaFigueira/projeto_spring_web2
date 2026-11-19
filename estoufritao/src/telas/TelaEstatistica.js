@@ -1,63 +1,84 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, ScrollView, RefreshControl } from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView, Text, TextInput, View } from 'react-native';
 import * as api from '../api';
-import { estilos, cores } from '../estilos';
-import { formatarMoeda } from '../util';
+import Botao from '../componentes/Botao';
+import { estilos } from '../estilos';
 
-export default function TelaEStatistica() {
-    const [estatistica, setEstatistica] = useState(null);
-    const [carregando, setCarregando] = useState(true);
-    const [MensagemDeErro, setMensagemDeErro] = useState('');
+export default function TelaLogin(props) {
+    const [nomeDoUsuario, setNomeDoUsuario] = useState('luis');
+    const [senhaDoUsuario, setSenhaDoUsuario] = useState('123');
+    const [estaCarregando, setEstaCarregando] = useState(false);
+    const [mensagemDeErro, setMensagemDeErro] = useState('');
 
-    async function carregarEstatisticas() {
+    async function entrarNaConta() {
+        if (nomeDoUsuario === '' || senhaDoUsuario === '') {
+            setMensagemDeErro('Preencha o nome e a senha.');
+            return;
+        }
+
+        setEstaCarregando(true);
+        setMensagemDeErro('');
+
         try {
-            const dadosRecebidos = await api.buscarEstatisticas();
-            setEstatistica(dadosRecebidos);
-            setMensagemDeErro('');
-        } catch {
-            setMensagemDeErro('Não foi possível carregar as estatísticas')
+            const tokenRecebido = await api.logarUsuario({
+                nome: nomeDoUsuario,
+                senha: senhaDoUsuario,
+            });
+
+            if (typeof tokenRecebido !== 'string' || tokenRecebido === '') {
+                setMensagemDeErro('Nome ou senha inválidos.');
+                return;
+            }
+
+            await api.definirToken(tokenRecebido);
+            props.aoLogar();
+        } catch (erro) {
+            if (erro.status === 401) {
+                setMensagemDeErro('Nome ou senha inválidos.');
+            } else {
+                setMensagemDeErro('Não foi possível conectar ao servidor.');
+            }
         } finally {
-            setCarregando(false);
+            setEstaCarregando(false);
         }
     }
 
-    function atualizarEstatisticas() {
-        setCarregando(true);
-        carregarEstatisticas();
-    }
-
-    useEffect(function carregarAoAbrirTela())
-
     return (
         <ScrollView
-        
-        style={estilos.tela}
-        contentConrainerStyle={estilos.conteudo}
-        refreshControl={<RefreshControl refreshing={carregando} onRefresh={carregar}></RefreshControl>}
-
+            style={estilos.tela}
+            contentContainerStyle={[estilos.conteudo, { justifyContent: 'center', flexGrow: 1 }]}
         >
-            <Text style={estilos.titulo}>Estatístiscas</Text>
-            {erro !== '' && <Text Style={estilos.erro}>{erro}</Text>}
+            <Text style={estilos.titulo}>Acesso ao Sistema</Text>
 
-            {estatistica && (
-                <View>
-                    <View style={estilos.cartao}>
-                        <Text style={estilos.suave}>Quantidade total de vendida</Text>
-                        <Text style={{ fontSize: 32, fontWeight: 'bold', color: cores.texto }}>
-                            {estatistica.quantidadeTotalVendida}
-                        </Text>
-                    </View>
-
-                    <View style={estilos.cartao}>
-                        <Text style={estilos.suave}>Lucro total</Text>
-                        <Text style={{ fontSize: 32, fontWeight: 'bold', color: cores.sucesso }}>
-                            {formatarMoeda(estatistica.lucroTotal)}
-                        </Text>
-                    </View>
-                </View>
+            {mensagemDeErro !== '' && (
+                <Text style={estilos.erro}>{mensagemDeErro}</Text>
             )}
 
-            <Text style={estilos.suave}>Puxe a tela para baixo para atualizar</Text>
+            <View style={estilos.cartao}>
+                <Text style={estilos.texto}>Nome</Text>
+                <TextInput
+                    style={estilos.entrada}
+                    placeholder="Digite seu nome"
+                    value={nomeDoUsuario}
+                    onChangeText={setNomeDoUsuario}
+                    autoCapitalize="none"
+                />
+
+                <Text style={estilos.texto}>Senha</Text>
+                <TextInput
+                    style={estilos.entrada}
+                    placeholder="Digite sua senha"
+                    value={senhaDoUsuario}
+                    onChangeText={setSenhaDoUsuario}
+                    secureTextEntry
+                />
+            </View>
+
+            <Botao
+                titulo="Entrar"
+                aoApertar={entrarNaConta}
+                desativado={estaCarregando || nomeDoUsuario === '' || senhaDoUsuario === ''}
+            />
         </ScrollView>
-    )
+    );
 }
