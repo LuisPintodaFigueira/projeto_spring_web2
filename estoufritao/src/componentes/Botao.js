@@ -2,12 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text} from 'react-native';
 import { cores } from '../estilos';
 
-export default function Botao( {titulo, aoApertar, tipo = 'principal', pequeno, desativado}) {
-    const titulo = props.titulo;
-    const aoApertar = props.aoApertar;
-    const tipo = props.tipo || 'principal';
-    const pequeno = props.pequeno;
-    const desativado = props.desativado;
+export default function Botao({ titulo, aoApertar, tipo = 'principal', pequeno, desativado }) {
 
     let corDeFundo = cores.principal;
 

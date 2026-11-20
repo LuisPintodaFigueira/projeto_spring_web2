@@ -22,7 +22,9 @@ public class UsuarioService implements CommandLineRunner {
 
     @Override
     public void run(String... argumentos) {
-        usuarioRepository.deleteAllInBatch();
+        if (usuarioRepository.findByNome(NOME_DO_USUARIO_FIXO) != null) {
+            return;
+        }
 
         Usuario usuarioFixo = new Usuario();
         usuarioFixo.setNome(NOME_DO_USUARIO_FIXO);

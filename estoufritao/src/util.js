@@ -3,7 +3,7 @@ import { Alert, Platform } from 'react-native';
 export function formatarMoeda(valor) {
     const valorNumerico = Number(valor) || 0;
     const valorComDuasCasas = valorNumerico.toFixed(2);
-    const valorComVírgula = valorComDuasCasas.replace('.', ',');
+    const valorComVirgula = valorComDuasCasas.replace('.', ',');
 
     return 'R$ ' + valorComVirgula;
 }
@@ -69,7 +69,7 @@ export function confirmar(titulo, mensagem, funcaoDeConfirmar) {
         const usuarioConfirmou = window.confirm(titulo + '\n' + mensagem);
 
         if (usuarioConfirmou) {
-            funcaoDeConfirmacao();
+            funcaoDeConfirmar();
         }
 
         return;
@@ -77,6 +77,6 @@ export function confirmar(titulo, mensagem, funcaoDeConfirmar) {
 
     Alert.alert(titulo, mensagem, [
         { text: 'Cancelar', style: 'cancel' },
-        { text: 'Confirmar', style: 'destructive', onPress: funcaoDeConfirmacao },        
+        { text: 'Confirmar', style: 'destructive', onPress: funcaoDeConfirmar },        
     ]);
 }

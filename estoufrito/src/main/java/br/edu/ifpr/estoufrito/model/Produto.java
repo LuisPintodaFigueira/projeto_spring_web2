@@ -12,6 +12,7 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
+    private String categoria;
     private BigDecimal preco;
     private BigDecimal custo;
     private int quantidadeEstoque;
@@ -31,6 +32,14 @@ public class Produto {
     }
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public BigDecimal getPreco() {

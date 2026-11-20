@@ -40,6 +40,15 @@ public class ProdutoController {
         return produtoService.alterarPreco(id, produto.getPreco());
     }
 
+    @PutMapping("/{id}/categoria")
+    public Produto alterarCategoria(@PathVariable Long id, @RequestBody(required = false) Produto produto) {
+        if (produto == null) {
+            throw new IllegalArgumentException("informe a categoria");
+        }
+
+        return produtoService.alterarCategoria(id, produto.getCategoria());
+    }
+
     @PatchMapping("/{id}/estoque")
     public Produto adicionarEstoqueProduto(@PathVariable Long id, @RequestBody(required = false) Produto produto) {
         if (produto == null) {

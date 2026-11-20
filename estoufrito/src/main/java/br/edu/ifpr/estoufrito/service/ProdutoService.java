@@ -33,8 +33,18 @@ public class ProdutoService {
         return produtoRepository.save(produto);
     }
 
+    public Produto alterarCategoria(Long idDoProduto, String novaCategoria) {
+        if (novaCategoria == null || novaCategoria.trim().isEmpty()) {
+            throw new IllegalArgumentException("informe uma categoria válida");
+        }
+
+        Produto produto = buscarProduto(idDoProduto);
+        produto.setCategoria(novaCategoria.trim());
+        return produtoRepository.save(produto);
+    }
+
     public Produto adicionarEstoque(Long idDoProduto,  int quantidadeAdicionada) {
-        if (quantidadeAdicionada < 0) {
+        if (quantidadeAdicionada <= 0) {
             throw new IllegalArgumentException("A quantidade deve ser maior que zero.");
         }
 

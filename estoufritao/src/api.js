@@ -7,29 +7,15 @@ let tokenAtual = null;
 let funcaoExecutadaQuandoSessaoExpirar = null;
 
 export async function salvarTokenNoDispositivo(novoToken) {
-    if(Platform.OS === 'web') {
-        await AsyncStorage.setItem(CHAVE_TOKEN, novoToken);
-        return
-    }
-
-    await SecureStore.setItemAsync(CHAVE_TOKEN, novoToken);
+    await AsyncStorage.setItem(CHAVE_TOKEN, novoToken);
 }
 
 export async function lerTokenDoDispositivo() {
-    if (Platform.OS === 'web') {
-        return await AsyncStorage.getItem(CHAVE_DO_TOKEN);
-    }
-
-    return await SecureStore.getItemAsync(CHAVE_DO_TOKEN);
+    return await AsyncStorage.getItem(CHAVE_TOKEN);
 }
 
 async function apagarTokenDoDispositivo() {
-    if (Platform.OS === 'web') {
-        await AsyncStorage.removeItem(CHAVE_DO_TOKEN);
-        return;
-    }
-
-    await SecureStore.deleteItemAsync(CHAVE_DO_TOKEN);
+    await AsyncStorage.removeItem(CHAVE_TOKEN);
 }
 
 export async function definirToken(novoToken) {
@@ -73,7 +59,7 @@ async function requisicao(caminho, metodo = 'GET', corpo) {
 
     const resposta = await fetch(API_URL + caminho, opcoesDaRequisicao);
 
-    if (resposta.status === 401 && token) {
+    if (resposta.status === 401 && tokenAtual) {
         await definirToken(null);
 
         if (funcaoExecutadaQuandoSessaoExpirar) {
@@ -96,7 +82,7 @@ async function requisicao(caminho, metodo = 'GET', corpo) {
         if (dadosDaResposta && dadosDaResposta.erro) {
             mensagem = dadosDaResposta.erro;
         } else if (dadosDaResposta && dadosDaResposta.message) {
-            mensagem = dadosDaResposta.mensage
+            mensagem = dadosDaResposta.message;
         }
 
         const erro = new Error(mensagem);
@@ -111,11 +97,17 @@ export const logarUsuario = (dadosDelogin) => requisicao('/v1/usuarios/login', '
 
 export const listarProdutos = () => requisicao('/v1/produtos');
 
+export const listarCategorias = () => requisicao('/v1/categorias');
+
+export const adicionarCategoria = (nome) => requisicao('/v1/categorias', 'POST', { nome });
+
 export const adicionarProduto = (produto) => requisicao('/v1/produtos', 'POST', produto);
 
-export const alterarProduto = (idDoProduto, novoPreco) => requisicao(`/v1/produtos/${idDoProduto}/preco`, 'PUT', { novoPreco });
+export const alterarPrecoDoProduto = (idDoProduto, novoPreco) => requisicao(`/v1/produtos/${idDoProduto}/preco`, 'PUT', { preco: novoPreco });
 
-export const adicionarEstoque = (id, quantidadeEstoque) => requisicao(`/v1/produtos/${id}/estoque`, 'PATCH', { quantidadeEstoque });
+export const adicionarProdutosAoEstoque = (id, quantidadeEstoque) => requisicao(`/v1/produtos/${id}/estoque`, 'PATCH', { quantidadeEstoque });
+
+export const alterarCategoriaDoProduto = (id, categoria) => requisicao(`/v1/produtos/${id}/categoria`, 'PUT', { categoria });
 
 export const excluirProduto = (id) => requisicao(`/v1/produtos/produtos/${id}`, 'DELETE');
 
