@@ -16,6 +16,7 @@ public class Venda {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime dataHora;
+    private LocalDateTime dataFechamento;
     private BigDecimal totalVendido;
     private BigDecimal lucroTotal;
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
@@ -36,6 +37,14 @@ public class Venda {
     }
     public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
+    }
+
+    public LocalDateTime getDataFechamento() {
+        return dataFechamento;
+    }
+
+    public void setDataFechamento(LocalDateTime dataFechamento) {
+        this.dataFechamento = dataFechamento;
     }
 
     public BigDecimal getTotalVendido() {

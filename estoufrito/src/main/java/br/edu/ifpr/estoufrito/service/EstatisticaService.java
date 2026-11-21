@@ -36,4 +36,11 @@ public class EstatisticaService {
         return estatisticaRepository.save(estatistica);
     }
 
+    public void zerarEstatisticas() {
+        Estatistica estatistica = buscarEstatistica();
+        estatistica.setQuantidadeTotalVendida(0);
+        estatistica.setLucroTotal(BigDecimal.ZERO);
+        estatisticaRepository.save(estatistica);
+    }
+
 }

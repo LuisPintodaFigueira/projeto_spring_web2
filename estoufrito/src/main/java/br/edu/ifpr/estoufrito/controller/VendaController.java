@@ -27,4 +27,9 @@ public class VendaController {
     public Venda realizarVenda(@RequestBody(required = false) VendaRequest pedido) {
         return vendaService.finalizarVenda(pedido);
     }
+
+    @PostMapping("/finalizar-dia")
+    public void finalizarDia() {
+        vendaService.finalizarDia();
+    }
 }

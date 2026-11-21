@@ -1,11 +1,11 @@
 import { StyleSheet } from 'react-native';
 
 export const cores = {
-  fundo: '#f4f4f5',
-  cartao: '#ffffff',
-  texto: '#18181b',
-  suave: '#71717a',
-  borda: '#d4d4d8',
+  fundo: '#0f0f0f',
+  cartao: '#212121',
+  texto: '#f1f1f1',
+  suave: '#aaaaaa',
+  borda: '#303030',
   principal: '#d97706',
   perigo: '#dc2626',
   sucesso: '#16a34a',
@@ -33,7 +33,8 @@ export const estilos = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     fontSize: 15,
-    backgroundColor: '#fff',
+    backgroundColor: '#121212',
+    color: cores.texto,
     marginBottom: 8,
   },
   linha: { flexDirection: 'row', alignItems: 'center' },

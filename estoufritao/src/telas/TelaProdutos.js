@@ -516,7 +516,7 @@ const estiloBotaoCategoria = {
     borderRadius: 20,
     borderWidth: 1,
     borderColor: cores.principal,
-    backgroundColor: '#fff',
+    backgroundColor: cores.cartao,
 };
 
 const estiloBotaoCategoriaSelecionado = {

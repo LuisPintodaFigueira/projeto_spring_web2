@@ -115,4 +115,6 @@ export const listarVendas = () => requisicao('/v1/vendas/vendas');
 
 export const realizarVenda = (itens) => requisicao('/v1/vendas/vendas', 'POST', { itensPedido: itens });
 
+export const finalizarDia = () => requisicao('/v1/vendas/finalizar-dia', 'POST');
+
 export const buscarEstatisticas = () => requisicao('/v1/estatisticas');

@@ -77,7 +77,25 @@ public class VendaService {
 
     public List<Venda> listarVendas() {
         Sort ordemDasVendas = Sort.by("dataHora").descending();
-        return vendaRepository.findAll(ordemDasVendas);
+        return vendaRepository.findByDataFechamentoIsNull(ordemDasVendas);
+    }
+
+    @Transactional
+    public void finalizarDia() {
+        List<Venda> vendasDoDia = vendaRepository.findByDataFechamentoIsNull();
+
+        if (vendasDoDia.isEmpty()) {
+            throw new IllegalArgumentException("Não há vendas para finalizar.");
+        }
+
+        LocalDateTime dataHoraDoFechamento = LocalDateTime.now();
+
+        for (Venda venda : vendasDoDia) {
+            venda.setDataFechamento(dataHoraDoFechamento);
+        }
+
+        vendaRepository.saveAll(vendasDoDia);
+        estatisticaService.zerarEstatisticas();
     }
 
     private void validarItemPedido(ItemPedidoRequest itemPedido) {
