@@ -46,7 +46,7 @@ export default function TelaLogin(props) {
     return (
         <ScrollView
             style={estilos.tela}
-            contentContainerStyle={[estilos.conteudo, { justifyContent: 'center', flexGrow: 1 }]}
+            contentContainerStyle={estilos.conteudoLogin}
         >
             <Text style={estilos.titulo}>Acesso ao Sistema</Text>
 

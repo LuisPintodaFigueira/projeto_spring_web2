@@ -1,6 +1,8 @@
 package br.edu.ifpr.estoufrito.service;
 
+import br.edu.ifpr.estoufrito.model.Categoria;
 import br.edu.ifpr.estoufrito.model.Produto;
+import br.edu.ifpr.estoufrito.repository.CategoriaRepository;
 import br.edu.ifpr.estoufrito.repository.ProdutoRepository;
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,7 +16,10 @@ public class ProdutoService {
     @Autowired
     private ProdutoRepository produtoRepository;
 
-    public List<Produto> ListarProdutos() {
+    @Autowired
+    private CategoriaRepository categoriaRepository;
+
+    public List<Produto> listarProdutos() {
         Sort ordemPorNome = Sort.by("nome").ascending();
         return produtoRepository.findAll(ordemPorNome);
     }
@@ -34,12 +39,10 @@ public class ProdutoService {
     }
 
     public Produto alterarCategoria(Long idDoProduto, String novaCategoria) {
-        if (novaCategoria == null || novaCategoria.trim().isEmpty()) {
-            throw new IllegalArgumentException("informe uma categoria válida");
-        }
+        String nomeDaCategoria = validarCategoria(novaCategoria);
 
         Produto produto = buscarProduto(idDoProduto);
-        produto.setCategoria(novaCategoria.trim());
+        produto.setCategoria(nomeDaCategoria);
         return produtoRepository.save(produto);
     }
 
@@ -75,6 +78,8 @@ public class ProdutoService {
             throw new IllegalArgumentException("informe o nome do produto");
         }
 
+        produto.setCategoria(validarCategoria(produto.getCategoria()));
+
         validarPreco(produto.getPreco());
 
         if (produto.getCusto() == null || produto.getCusto().signum() < 0) {
@@ -88,8 +93,22 @@ public class ProdutoService {
 
     private void validarPreco(BigDecimal preco) {
         if (preco == null || preco.signum() <= 0) {
-            throw new IllegalArgumentException("o preço deve ser maio que zero");
+            throw new IllegalArgumentException("o preço deve ser maior que zero");
         }
+    }
+
+    private String validarCategoria(String nomeDaCategoria) {
+        if (nomeDaCategoria == null || nomeDaCategoria.trim().isEmpty()) {
+            throw new IllegalArgumentException("Informe uma categoria válida.");
+        }
+
+        Optional<Categoria> categoriaEncontrada = categoriaRepository.findByNomeIgnoreCase(nomeDaCategoria.trim());
+
+        if (categoriaEncontrada.isEmpty()) {
+            throw new IllegalArgumentException("A categoria informada não existe.");
+        }
+
+        return categoriaEncontrada.get().getNome();
     }
 
     private Produto buscarProduto(Long idDoProduto) {

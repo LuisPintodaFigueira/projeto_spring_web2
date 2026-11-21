@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StatusBar, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import TelaPrincipal from './src/telas/TelaPrincipal';
 import TelaEstatistica from './src/telas/TelaEstatistica';
-import { cores } from './src/estilos';
+import { estilos } from './src/estilos';
 import TelaVendas from './src/telas/TelaVendas';
 import TelaProdutos from './src/telas/TelaProdutos';
 import TelaLogin from './src/telas/TelaLogin';
@@ -64,7 +64,7 @@ export default function App() {
 
   if (verificando) {                                       // NOVO (item 3)
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={estilos.carregamento}>
         <ActivityIndicator size="large" />
       </View>
     );
@@ -81,13 +81,13 @@ export default function App() {
   else tela = <TelaEstatistica></TelaEstatistica>;
 
   return (
-    <View style={{ flex: 1, backgroundColor: cores.fundo, paddingTop: 40 }}>
+    <View style={estilos.aplicativo}>
 
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16 }}>
-        <Text style={{ fontSize: 22, fontWeight: 'bold', color: cores.principal, paddingVertical: 8 }}>
+      <View style={estilos.cabecalhoAplicativo}>
+        <Text style={estilos.tituloAplicativo}>
           EstouFrito
         </Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={estilos.botoesDoCabecalho}>
           <Botao
             titulo="Finalizar dia"
             tipo="perigo"
@@ -95,23 +95,26 @@ export default function App() {
             desativado={finalizandoDia}
             aoApertar={pedirConfirmacaoParaFinalizarDia}
           />
-          <View style={{ width: 8 }} />
+          <View style={estilos.espacoEntreBotoes} />
           <Botao titulo="Sair" tipo="perigo" pequeno aoApertar={sair} />
         </View>
       </View>
 
-      <View key={versaoDasAbas} style={{ flex: 1 }}>{tela}</View>
+      <View key={versaoDasAbas} style={estilos.conteudoAba}>{tela}</View>
 
-      <View style={{ flexDirection: 'row', borderTopWidth: 1, borderColor: cores.borda, backgroundColor: cores.cartao, paddingBottom: 12 }}>
+      <View style={estilos.barraDeAbas}>
         {ABAS.map((aba) => {
           const ativa = aba.id === abaAtual;
           return (
             <TouchableOpacity
               key={aba.id}
-              style={{ flex: 1, paddingVertical: 14, alignItems: 'center' }}
+              style={estilos.botaoDaAba}
               onPress={() => setAbaAtual(aba.id)}
             >
-              <Text style={{ fontSize: 12, fontWeight: ativa ? 'bold' : 'normal', color: ativa ? cores.principal : cores.suave }}>
+              <Text style={ativa
+                ? [estilos.textoDaAba, estilos.textoDaAbaAtiva]
+                : estilos.textoDaAba}
+              >
                 {aba.titulo}
               </Text>
             </TouchableOpacity>

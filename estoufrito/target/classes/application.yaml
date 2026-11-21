@@ -1,9 +1,6 @@
 spring:
   application:
     name: estoufrito
-  h2:
-    console:
-      enabled: true
   datasource:
     url: jdbc:postgresql://localhost:5433/postgres
     username: postgres

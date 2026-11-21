@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import * as api from '../api';
 import Botao from '../componentes/Botao';
-import { cores, estilos } from '../estilos';
+import { estilos } from '../estilos';
 import { avisar, confirmar, formatarMoeda, lerNumero } from '../util';
 
 const TODAS_AS_CATEGORIAS = 'TODAS';
@@ -42,11 +42,11 @@ export function ProdutoItem(props) {
     function mostrarCategoriaParaProduto(categoria) {
         const categoriaEstaSelecionada = categoria.nome === produto.categoria;
         const estiloDoBotao = categoriaEstaSelecionada
-            ? [estiloBotaoCategoria, estiloBotaoCategoriaSelecionado]
-            : estiloBotaoCategoria;
+            ? [estilos.botaoCategoria, estilos.botaoCategoriaSelecionado]
+            : estilos.botaoCategoria;
         const estiloDoTexto = categoriaEstaSelecionada
-            ? estiloTextoCategoriaSelecionado
-            : estiloTextoCategoria;
+            ? estilos.textoCategoriaSelecionado
+            : estilos.textoCategoria;
 
         return (
             <TouchableOpacity
@@ -114,12 +114,12 @@ export function ProdutoItem(props) {
             <Text style={estilos.nome}>{produto.nome}</Text>
             <Text style={estilos.suave}>Categoria: {produto.categoria || 'Sem categoria'}</Text>
             {listaDeCategorias.length > 0 && (
-                <View style={estiloSeletorDeCategoria}>
+                <View style={estilos.seletorDeCategoria}>
                     <Text style={estilos.suave}>Mudar categoria</Text>
                     <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={estiloListaDeCategorias}
+                        contentContainerStyle={estilos.listaDeCategorias}
                     >
                         {listaDeCategorias.map(mostrarCategoriaParaProduto)}
                     </ScrollView>
@@ -130,9 +130,9 @@ export function ProdutoItem(props) {
             </Text>
             <Text style={estilos.texto}>Estoque: {produto.quantidadeEstoque}</Text>
 
-            <View style={[estilos.linha, estiloLinhaDeEntrada]}>
+            <View style={[estilos.linha, estilos.linhaDeEntrada]}>
                 <TextInput
-                    style={[estilos.entrada, estiloEntradaCompacta]}
+                    style={[estilos.entrada, estilos.entradaCompacta]}
                     placeholder="Novo preço"
                     keyboardType="decimal-pad"
                     value={textoDoNovoPreco}
@@ -141,9 +141,9 @@ export function ProdutoItem(props) {
                 <Botao titulo="Alterar preço" pequeno aoApertar={salvarNovoPreco} />
             </View>
 
-            <View style={[estilos.linha, estiloLinhaDeEntrada]}>
+            <View style={[estilos.linha, estilos.linhaDeEntrada]}>
                 <TextInput
-                    style={[estilos.entrada, estiloEntradaCompacta]}
+                    style={[estilos.entrada, estilos.entradaCompacta]}
                     placeholder="Quantidade para adicionar"
                     keyboardType="number-pad"
                     value={textoDaQuantidade}
@@ -156,7 +156,7 @@ export function ProdutoItem(props) {
                 />
             </View>
 
-            <View style={estiloBotaoExcluir}>
+            <View style={estilos.botaoExcluir}>
                 <Botao
                     titulo="Excluir produto"
                     tipo="perigo"
@@ -318,11 +318,11 @@ export default function TelaProdutos() {
     function mostrarCategoria(categoria) {
         const estaSelecionada = categoriaSelecionada === categoria.nome;
         const estiloDoBotao = estaSelecionada
-            ? [estiloBotaoCategoria, estiloBotaoCategoriaSelecionado]
-            : estiloBotaoCategoria;
+            ? [estilos.botaoCategoria, estilos.botaoCategoriaSelecionado]
+            : estilos.botaoCategoria;
         const estiloDoTexto = estaSelecionada
-            ? estiloTextoCategoriaSelecionado
-            : estiloTextoCategoria;
+            ? estilos.textoCategoriaSelecionado
+            : estilos.textoCategoria;
 
         return (
             <TouchableOpacity
@@ -340,11 +340,11 @@ export default function TelaProdutos() {
     function mostrarOpcaoDeCategoriaParaNovoProduto(categoria) {
         const estaSelecionada = categoriaDoNovoProduto === categoria.nome;
         const estiloDoBotao = estaSelecionada
-            ? [estiloBotaoCategoria, estiloBotaoCategoriaSelecionado]
-            : estiloBotaoCategoria;
+            ? [estilos.botaoCategoria, estilos.botaoCategoriaSelecionado]
+            : estilos.botaoCategoria;
         const estiloDoTexto = estaSelecionada
-            ? estiloTextoCategoriaSelecionado
-            : estiloTextoCategoria;
+            ? estilos.textoCategoriaSelecionado
+            : estilos.textoCategoria;
 
         return (
             <TouchableOpacity
@@ -383,20 +383,20 @@ export default function TelaProdutos() {
     }
 
     const estiloBotaoTodas = categoriaSelecionada === TODAS_AS_CATEGORIAS
-        ? [estiloBotaoCategoria, estiloBotaoCategoriaSelecionado]
-        : estiloBotaoCategoria;
+        ? [estilos.botaoCategoria, estilos.botaoCategoriaSelecionado]
+        : estilos.botaoCategoria;
     const estiloTextoTodas = categoriaSelecionada === TODAS_AS_CATEGORIAS
-        ? estiloTextoCategoriaSelecionado
-        : estiloTextoCategoria;
+        ? estilos.textoCategoriaSelecionado
+        : estilos.textoCategoria;
 
     return (
         <View style={estilos.tela}>
-            <View style={estiloCabecalhoCategorias}>
+            <View style={estilos.cabecalhoCategorias}>
                 <Text style={estilos.titulo}>Categorias</Text>
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={estiloListaDeCategorias}
+                    contentContainerStyle={estilos.listaDeCategorias}
                 >
                     <TouchableOpacity
                         style={estiloBotaoTodas}
@@ -412,7 +412,7 @@ export default function TelaProdutos() {
             </View>
 
             <ScrollView
-                style={estiloConteudoProdutos}
+                style={estilos.colunaFlexivel}
                 contentContainerStyle={estilos.conteudo}
                 refreshControl={
                     <RefreshControl refreshing={estaCarregando} onRefresh={atualizarTela} />
@@ -445,7 +445,7 @@ export default function TelaProdutos() {
                         <ScrollView
                             horizontal
                             showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={estiloListaDeCategorias}
+                            contentContainerStyle={estilos.listaDeCategorias}
                         >
                             {listaDeCategorias.map(mostrarOpcaoDeCategoriaParaNovoProduto)}
                         </ScrollView>
@@ -494,63 +494,3 @@ export default function TelaProdutos() {
         </View>
     );
 }
-
-const estiloCabecalhoCategorias = {
-    backgroundColor: cores.fundo,
-    paddingTop: 12,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: cores.borda,
-};
-
-const estiloListaDeCategorias = {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingBottom: 10,
-};
-
-const estiloBotaoCategoria = {
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    marginRight: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: cores.principal,
-    backgroundColor: cores.cartao,
-};
-
-const estiloBotaoCategoriaSelecionado = {
-    backgroundColor: cores.principal,
-};
-
-const estiloTextoCategoria = {
-    color: cores.principal,
-    fontWeight: 'bold',
-};
-
-const estiloTextoCategoriaSelecionado = {
-    color: '#fff',
-    fontWeight: 'bold',
-};
-
-const estiloConteudoProdutos = {
-    flex: 1,
-};
-
-const estiloLinhaDeEntrada = {
-    marginTop: 8,
-};
-
-const estiloEntradaCompacta = {
-    flex: 1,
-    marginRight: 8,
-    marginBottom: 0,
-};
-
-const estiloBotaoExcluir = {
-    marginTop: 10,
-};
-
-const estiloSeletorDeCategoria = {
-    marginTop: 8,
-};

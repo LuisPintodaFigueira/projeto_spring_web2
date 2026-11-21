@@ -23,7 +23,7 @@ public class ProdutoController {
 
     @GetMapping
     public List<Produto> verTodosOsProdutos() {
-        return produtoService.ListarProdutos();
+        return produtoService.listarProdutos();
     }
 
     @PostMapping

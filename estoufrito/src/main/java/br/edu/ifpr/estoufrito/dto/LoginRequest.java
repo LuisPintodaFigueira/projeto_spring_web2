@@ -12,7 +12,7 @@ public class LoginRequest {
         return nome;
     }
 
-    public void serNome(String nome) {
+    public void setNome(String nome) {
         this.nome = nome;
     }
 

@@ -1,41 +1,28 @@
 import React from 'react';
 import { TouchableOpacity, Text} from 'react-native';
-import { cores } from '../estilos';
+import { estilos } from '../estilos';
 
 export default function Botao({ titulo, aoApertar, tipo = 'principal', pequeno, desativado }) {
 
-    let corDeFundo = cores.principal;
+    let estiloDaCorDoBotao = estilos.botaoPrincipal;
 
     if (tipo === 'perigo') {
-        corDeFundo = cores.perigo;
+        estiloDaCorDoBotao = estilos.botaoPerigo;
     } else if (tipo === 'neutro') {
-        corDeFundo = cores.suave;
+        estiloDaCorDoBotao = estilos.botaoNeutro;
     }
 
-    let espacamentoVertical = 12;
-    let espacamentoHorizontal = 16;
-    let tamanhoDoTexto = 15;
+    const estiloDoBotao = [estilos.botao, estiloDaCorDoBotao];
+    const estiloDoTexto = [estilos.textoDoBotao];
 
     if (pequeno) {
-        espacamentoVertical = 8;
-        espacamentoHorizontal = 12;
-        tamanhoDoTexto = 13;
+        estiloDoBotao.push(estilos.botaoPequeno);
+        estiloDoTexto.push(estilos.textoDoBotaoPequeno);
     }
 
-    const estiloDoBotao = {
-        backgroundColor: corDeFundo,
-        opacity: desativado ? 0.5 : 1,
-        paddingVertical: espacamentoVertical,
-        paddingHorizontal: espacamentoHorizontal,
-        borderRadius: 6,
-        alignItems: 'center',
-    };
-
-    const estiloDoTexto = {
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: tamanhoDoTexto,
-    };
+    if (desativado) {
+        estiloDoBotao.push(estilos.botaoDesativado);
+    }
 
     return (
         <TouchableOpacity onPress={aoApertar} disabled={desativado} style={estiloDoBotao}>
