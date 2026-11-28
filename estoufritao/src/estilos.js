@@ -39,6 +39,20 @@ export const estilos = StyleSheet.create({
   textoDaAbaAtiva: { fontWeight: 'bold', color: cores.principal },
   tela: { flex: 1, backgroundColor: cores.fundo },
   conteudo: { padding: 16, paddingBottom: 40 },
+  rodapeVenda: {
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 12,
+    borderTopWidth: 1,
+    borderColor: cores.borda,
+    backgroundColor: cores.cartao,
+  },
+  totalDaVenda: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: cores.texto,
+    marginBottom: 8,
+  },
   titulo: { fontSize: 20, fontWeight: 'bold', color: cores.texto, marginBottom: 12 },
   tituloComEspacoSuperior: { marginTop: 8 },
   cartao: {

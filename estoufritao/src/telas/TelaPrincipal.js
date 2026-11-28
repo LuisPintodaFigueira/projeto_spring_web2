@@ -268,8 +268,10 @@ export default function TelaPrincipal() {
                 )}
 
                 {produtosVisiveis.map(mostrarProduto)}
+            </ScrollView>
 
-                <Text style={[estilos.titulo, estilos.tituloComEspacoSuperior]}>
+            <View style={estilos.rodapeVenda}>
+                <Text style={estilos.totalDaVenda}>
                     Total: {formatarMoeda(totalDaVenda)}
                 </Text>
                 <Botao
@@ -277,7 +279,7 @@ export default function TelaPrincipal() {
                     aoApertar={finalizarVenda}
                     desativado={itensSelecionados.length === 0}
                 />
-            </ScrollView>
+            </View>
         </View>
     );
 }
