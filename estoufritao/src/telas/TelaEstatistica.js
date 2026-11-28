@@ -14,97 +14,9 @@ export default function TelaEstatistica() {
 
     const carregarEstatisticas = useCallback(async () => {
         try {
-            const [dados, categorias, produtos, vendas] = await Promise.all([
-                api.buscarEstatisticas(),
-                api.listarCategorias(),
-                api.listarProdutos(),
-                api.listarVendas(),
-            ]);
-
-            if (!Array.isArray(categorias) || !Array.isArray(produtos) || !Array.isArray(vendas)) {
-                throw new Error('Dados inválidos.');
-            }
-
-            const categoriasValidas = categorias.filter((categoria) =>
-                categoria && typeof categoria.nome === 'string' && categoria.nome !== ''
-            );
-            const totais = categoriasValidas.map((categoria) => ({
-                nome: categoria.nome,
-                quantidadeVendida: 0,
-                totalVendido: 0,
-                produtosVendidos: [],
-            }));
-
-            vendas.forEach((venda) => {
-                const itensDaVenda = venda && Array.isArray(venda.itensVenda) ? venda.itensVenda : [];
-
-                itensDaVenda.forEach((item) => {
-                    if (!item) {
-                        return;
-                    }
-
-                    const produto = produtos.find((produtoDaLista) =>
-                        produtoDaLista && String(produtoDaLista.id) === String(item.produtoId)
-                    );
-                    const quantidade = Number(item.quantidade);
-                    const precoUnitario = Number(item.precoUnitario);
-                    const custoUnitario = Number(item.custoUnitario);
-
-                    if (!Number.isFinite(quantidade) || quantidade <= 0 ||
-                        !Number.isFinite(precoUnitario) || precoUnitario < 0) {
-                        return;
-                    }
-
-                    const categoria = totais.find((total) =>
-                        total.nome === (produto ? produto.categoria : 'Sem categoria')
-                    );
-                    const categoriaSemCadastro = categoria || totais.find((total) => total.nome === 'Sem categoria');
-                    const totalDaCategoria = categoriaSemCadastro || {
-                        nome: 'Sem categoria',
-                        quantidadeVendida: 0,
-                        totalVendido: 0,
-                        produtosVendidos: [],
-                    };
-                    const nomeProduto = item.nomeProduto || (produto && produto.nome) || 'Produto sem nome';
-                    let produtoVendido = totalDaCategoria.produtosVendidos.find((produtoDaLista) =>
-                        String(produtoDaLista.id) === String(item.produtoId) && produtoDaLista.nome === nomeProduto
-                    );
-
-                    if (!produtoVendido) {
-                        produtoVendido = {
-                            id: item.produtoId || nomeProduto,
-                            nome: nomeProduto,
-                            quantidadeVendida: 0,
-                            lucroTotal: 0,
-                            lucroDisponivel: true,
-                        };
-                        totalDaCategoria.produtosVendidos.push(produtoVendido);
-                    }
-
-                    totalDaCategoria.quantidadeVendida += quantidade;
-                    totalDaCategoria.totalVendido += quantidade * precoUnitario;
-                    produtoVendido.quantidadeVendida += quantidade;
-
-                    const custoValido = item.custoUnitario !== null &&
-                        item.custoUnitario !== undefined &&
-                        item.custoUnitario !== '' &&
-                        Number.isFinite(custoUnitario) &&
-                        custoUnitario >= 0;
-
-                    if (custoValido) {
-                        produtoVendido.lucroTotal += quantidade * (precoUnitario - custoUnitario);
-                    } else {
-                        produtoVendido.lucroDisponivel = false;
-                    }
-
-                    if (!categoriaSemCadastro) {
-                        totais.push(totalDaCategoria);
-                    }
-                });
-            });
-
+            const dados = await api.buscarEstatisticas();
             setEstatisticas(dados);
-            setTotaisPorCategoria(totais);
+            setTotaisPorCategoria(dados.totaisPorCategoria || []);
             setMensagemDeErro('');
         } catch {
             setMensagemDeErro('Não foi possível carregar as estatísticas.');

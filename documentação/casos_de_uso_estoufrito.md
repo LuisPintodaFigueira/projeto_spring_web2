@@ -1,45 +1,12 @@
 # **Casos de uso \- EstouFrito**
 
-O sistema tem um só ator, o Usuário, que é o dono ou o atendente do comércio. Em todos os casos de uso, menos no login, o usuário já precisa ter feito login.
+O sistema é de uso interno e não tem contas ou login. O atendente abre o aplicativo e usa as funções disponíveis.
 
-## **1\. Fazer login**
+## **1\. Cadastrar categoria**
 
-Ator: Usuário
+Ator: Atendente
 
-Pré-condição: o backend está rodando e o usuário de demonstração existe no banco (ele é criado quando o backend inicia, se ainda não existir).
-
-Fluxo principal:
-
-1. O usuário abre o aplicativo e vê a tela de login.  
-2. Digita o nome e a senha (os campos já vêm preenchidos com o usuário de demonstração) e aperta "Entrar".  
-3. O backend confere a senha e devolve um token.  
-4. O aplicativo guarda o token e abre a tela de nova venda.
-
-Fluxos alternativos:
-
-* Se deixar algum campo em branco, aparece "Preencha o nome e a senha.".  
-* Se o nome ou a senha estiverem errados, aparece "Nome ou senha inválidos.".  
-* Se o backend estiver desligado, aparece "Não foi possível conectar ao servidor.".  
-* Se o aplicativo abrir com um token salvo, ele já entra direto. Se o token tiver vencido, a primeira chamada à API volta com erro 401 e o aplicativo volta para a tela de login.
-
-## **2\. Sair da conta**
-
-Ator: Usuário
-
-Pré-condição: estar logado.
-
-Fluxo principal:
-
-1. O usuário aperta o botão "Sair" no topo da tela.  
-2. O aplicativo apaga o token e volta para o login.
-
-Fluxo alternativo: se o token vencer enquanto o usuário usa o aplicativo, ele volta para o login sozinho.
-
-## **3\. Cadastrar categoria**
-
-Ator: Usuário
-
-Pré-condição: estar logado.
+Pré-condição: o aplicativo e o backend estão funcionando.
 
 Fluxo principal:
 
@@ -52,11 +19,11 @@ Fluxos alternativos:
 * Se o nome estiver vazio, aparece "Digite o nome da categoria.".  
 * Se a categoria já existir (maiúscula e minúscula contam igual), aparece "Essa categoria já existe.".
 
-## **4\. Cadastrar produto**
+## **2\. Cadastrar produto**
 
-Ator: Usuário
+Ator: Atendente
 
-Pré-condição: estar logado e ter pelo menos uma categoria cadastrada.
+Pré-condição: o aplicativo e o backend estão funcionando e há pelo menos uma categoria cadastrada.
 
 Fluxo principal:
 
@@ -71,11 +38,11 @@ Fluxos alternativos:
 * Se o custo for negativo ou o estoque não for um número inteiro, também aparece um aviso.  
 * Se o backend recusar o produto (por exemplo, porque a categoria não existe), aparece "Não foi possível cadastrar o produto.".
 
-## **5\. Consultar e filtrar produtos**
+## **3\. Consultar e filtrar produtos**
 
-Ator: Usuário
+Ator: Atendente
 
-Pré-condição: estar logado.
+Pré-condição: o aplicativo e o backend estão funcionando.
 
 Fluxo principal:
 
@@ -88,11 +55,11 @@ Fluxos alternativos:
 * Se a categoria não tiver produtos, aparece "Nenhum produto nesta categoria.".  
 * Se der erro ao carregar, aparece uma mensagem em vermelho.
 
-## **6\. Alterar um produto (preço, estoque ou categoria)**
+## **4\. Alterar um produto (preço, estoque ou categoria)**
 
-Ator: Usuário
+Ator: Atendente
 
-Pré-condição: estar logado e ter um produto cadastrado.
+Pré-condição: o aplicativo e o backend estão funcionando e há um produto cadastrado.
 
 Fluxo principal:
 
@@ -107,11 +74,11 @@ Fluxos alternativos:
 * Se a categoria escolhida não existir no banco, o backend recusa e aparece o aviso "A categoria informada não existe.".  
 * Se outra coisa der errado no backend, aparece um aviso dizendo que não foi possível fazer a alteração.
 
-## **7\. Excluir produto**
+## **5\. Excluir produto**
 
-Ator: Usuário
+Ator: Atendente
 
-Pré-condição: estar logado e ter um produto cadastrado.
+Pré-condição: o aplicativo e o backend estão funcionando e há um produto cadastrado.
 
 Fluxo principal:
 
@@ -121,11 +88,11 @@ Fluxo principal:
 
 Fluxo alternativo: se o usuário cancelar, nada é apagado.
 
-## **8\. Realizar venda**
+## **6\. Realizar venda**
 
-Ator: Usuário
+Ator: Atendente
 
-Pré-condição: estar logado e ter produtos com estoque.
+Pré-condição: o aplicativo e o backend estão funcionando e há produtos com estoque.
 
 Fluxo principal:
 
@@ -141,11 +108,11 @@ Fluxos alternativos:
 * Se nenhum produto foi escolhido, o botão fica desativado.  
 * Se faltar estoque quando a venda chega no backend, a venda não é salva, o estoque não muda e aparece "Erro ao finalizar a venda.".
 
-## **9\. Consultar vendas e estatísticas**
+## **7\. Consultar vendas e estatísticas**
 
-Ator: Usuário
+Ator: Atendente
 
-Pré-condição: estar logado.
+Pré-condição: o aplicativo e o backend estão funcionando.
 
 Fluxo principal:
 
@@ -159,11 +126,11 @@ Fluxos alternativos:
 * Se uma categoria não vendeu nada, o detalhe mostra "Nenhum produto vendido nesta categoria.".  
 * Se der erro ao carregar, aparece uma mensagem em vermelho.
 
-## **10\. Finalizar o dia**
+## **8\. Finalizar o dia**
 
-Ator: Usuário
+Ator: Atendente
 
-Pré-condição: estar logado e ter pelo menos uma venda registrada.
+Pré-condição: o aplicativo e o backend estão funcionando e há pelo menos uma venda registrada.
 
 Fluxo principal:
 

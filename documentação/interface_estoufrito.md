@@ -6,7 +6,7 @@ A interface é simples, com poucas telas e botões grandes. O aplicativo usa um 
 
 ## **Cores**
 
-As cores estão no arquivo estilos.js. O fundo das telas é um preto bem escuro (\#0f0f0f) e os cartões são um cinza escuro um pouco mais claro (\#212121). Os campos de texto têm um fundo ainda mais escuro (\#121212) e as bordas são cinza (\#303030). O texto principal é quase branco (\#f1f1f1) e o texto de apoio é cinza claro (\#aaaaaa). O laranja (\#d97706) é a cor principal e aparece no título, nos botões, nos botões de categoria e na aba selecionada. O vermelho (\#dc2626) é usado nos botões "Finalizar dia", "Sair" e "Excluir produto" e nas mensagens de erro.
+As cores estão no arquivo estilos.js. O fundo das telas é um preto bem escuro (\#0f0f0f) e os cartões são um cinza escuro um pouco mais claro (\#212121). Os campos de texto têm um fundo ainda mais escuro (\#121212) e as bordas são cinza (\#303030). O texto principal é quase branco (\#f1f1f1) e o texto de apoio é cinza claro (\#aaaaaa). O laranja (\#d97706) é a cor principal e aparece no título, nos botões, nos botões de categoria e na aba selecionada. O vermelho (\#dc2626) é usado nos botões "Finalizar dia" e "Excluir produto" e nas mensagens de erro.
 
 ## **Fontes**
 
@@ -14,7 +14,7 @@ Não escolhi uma fonte, então o aplicativo usa a fonte padrão de cada aparelho
 
 ## **Telas**
 
-Ao abrir o aplicativo aparece a tela de login, com os campos de nome e senha e o botão "Entrar". Depois do login, o aplicativo tem sempre o nome "EstouFrito" no topo, à esquerda, e à direita dois botões vermelhos pequenos: "Finalizar dia" e "Sair". Embaixo ficam as quatro abas: Nova venda, Produtos, Vendas e Estatísticas. A aba escolhida fica em laranja e negrito.
+Ao abrir o aplicativo, aparece o nome "EstouFrito" no topo, à esquerda, e o botão vermelho pequeno "Finalizar dia" à direita. Embaixo ficam as quatro abas: Nova venda, Produtos, Vendas e Estatísticas. A aba escolhida fica em laranja e negrito.
 
 Na aba Nova venda, que é a primeira, aparecem os botões de categoria no topo e a lista de produtos em cartões, cada um com nome, categoria, preço e estoque. Do lado direito de cada cartão ficam os botões redondos "-" e "+" para escolher a quantidade. No fim da lista aparece o total e o botão "Finalizar venda".
 

@@ -12,7 +12,6 @@ export const cores = {
 };
 
 export const estilos = StyleSheet.create({
-  carregamento: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   aplicativo: { flex: 1, backgroundColor: cores.fundo, paddingTop: 40 },
   cabecalhoAplicativo: {
     flexDirection: 'row',
@@ -27,7 +26,6 @@ export const estilos = StyleSheet.create({
     paddingVertical: 8,
   },
   botoesDoCabecalho: { flexDirection: 'row', alignItems: 'center' },
-  espacoEntreBotoes: { width: 8 },
   conteudoAba: { flex: 1 },
   barraDeAbas: {
     flexDirection: 'row',
@@ -41,7 +39,6 @@ export const estilos = StyleSheet.create({
   textoDaAbaAtiva: { fontWeight: 'bold', color: cores.principal },
   tela: { flex: 1, backgroundColor: cores.fundo },
   conteudo: { padding: 16, paddingBottom: 40 },
-  conteudoLogin: { padding: 16, paddingBottom: 40, justifyContent: 'center', flexGrow: 1 },
   titulo: { fontSize: 20, fontWeight: 'bold', color: cores.texto, marginBottom: 12 },
   tituloComEspacoSuperior: { marginTop: 8 },
   cartao: {

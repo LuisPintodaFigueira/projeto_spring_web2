@@ -16,9 +16,9 @@ Para o dono ou o atendente de um comércio pequeno que quer algo simples de usar
 
 ## **Proposta de valor**
 
-A pessoa faz login, escolhe os produtos que o cliente pediu e finaliza a venda em poucos toques. O estoque é descontado sozinho, o sistema não deixa vender mais do que tem e o lucro é calculado automaticamente. Nas estatísticas dá para ver o total vendido e o lucro, e também quanto cada categoria vendeu, com o detalhe de cada produto. No fim do expediente, a pessoa aperta "Finalizar dia" para zerar as vendas e as estatísticas e começar o dia seguinte limpo, sem perder nada, porque as vendas continuam salvas no banco.
+A pessoa abre o aplicativo, escolhe os produtos que o cliente pediu e finaliza a venda em poucos toques. O estoque é descontado sozinho, o sistema não deixa vender mais do que tem e o lucro é calculado automaticamente. Nas estatísticas dá para ver o total vendido e o lucro, e também quanto cada categoria vendeu, com o detalhe de cada produto. No fim do expediente, a pessoa aperta "Finalizar dia" para zerar as vendas e as estatísticas e começar o dia seguinte limpo, sem perder nada, porque as vendas continuam salvas no banco.
 
 ## **O que ainda não tem**
 
-Não tem cadastro de usuários (existe só um usuário de demonstração), não controla forma de pagamento e não avisa quando o estoque está baixo. Depois que o dia é finalizado, o aplicativo não mostra mais as vendas dos dias anteriores, apesar de elas continuarem guardadas no banco.
+O aplicativo é de uso interno e não tem contas ou login. Ele não controla forma de pagamento e não avisa quando o estoque está baixo. Depois que o dia é finalizado, o aplicativo não mostra mais as vendas dos dias anteriores, apesar de elas continuarem guardadas no banco.
 

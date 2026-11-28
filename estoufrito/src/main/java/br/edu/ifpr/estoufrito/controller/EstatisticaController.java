@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import br.edu.ifpr.estoufrito.service.EstatisticaService;
-import br.edu.ifpr.estoufrito.model.Estatistica;
+import br.edu.ifpr.estoufrito.dto.EstatisticaResponse;
 
 @RestController
 @RequestMapping("/v1/estatisticas")
@@ -15,7 +15,7 @@ public class EstatisticaController {
     private EstatisticaService estatisticaService;
 
     @GetMapping
-    public Estatistica buscarEstatisticas() {
+    public EstatisticaResponse buscarEstatisticas() {
         return estatisticaService.buscarEstatistica();
     }
 }

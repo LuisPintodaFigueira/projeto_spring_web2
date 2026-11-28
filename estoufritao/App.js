@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import TelaPrincipal from './src/telas/TelaPrincipal';
 import TelaEstatistica from './src/telas/TelaEstatistica';
 import { estilos } from './src/estilos';
 import TelaVendas from './src/telas/TelaVendas';
 import TelaProdutos from './src/telas/TelaProdutos';
-import TelaLogin from './src/telas/TelaLogin';
 import Botao from './src/componentes/Botao';
-import * as api from './src/api';
 import { avisar, confirmar } from './src/util';
 
 const ABAS = [
@@ -18,27 +16,9 @@ const ABAS = [
 ];
 
 export default function App() {
-  const [logado, setLogado] = useState(false);
-  const [verificando, setVerificando] = useState(true);
   const [abaAtual, setAbaAtual] = useState('venda');
   const [finalizandoDia, setFinalizandoDia] = useState(false);
   const [versaoDasAbas, setVersaoDasAbas] = useState(0);
-
-  useEffect(() => {
-    api.registrarAoSessaoExpirar(() => setLogado(false));
-
-    async function restaurarSessao() {
-      const temToken = await api.carregarTokenSalvo();
-      setLogado(temToken);
-      setVerificando(false);
-    }
-    restaurarSessao();
-  }, []);
-
-  async function sair() {
-    await api.definirToken(null);
-    setLogado(false);
-  }
 
   async function finalizarDia() {
     setFinalizandoDia(true);
@@ -62,18 +42,6 @@ export default function App() {
     );
   }
 
-  if (verificando) {                                       // NOVO (item 3)
-    return (
-      <View style={estilos.carregamento}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
-  if (!logado) {
-    return <TelaLogin aoLogar={() => setLogado(true)} />;
-  }
-
   let tela;
   if (abaAtual === 'venda') tela = <TelaPrincipal></TelaPrincipal>;
   else if (abaAtual === 'produtos') tela = <TelaProdutos></TelaProdutos>;
@@ -95,8 +63,6 @@ export default function App() {
             desativado={finalizandoDia}
             aoApertar={pedirConfirmacaoParaFinalizarDia}
           />
-          <View style={estilos.espacoEntreBotoes} />
-          <Botao titulo="Sair" tipo="perigo" pequeno aoApertar={sair} />
         </View>
       </View>
 

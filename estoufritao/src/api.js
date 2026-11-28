@@ -1,51 +1,9 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from './config';
-
-const CHAVE_TOKEN = 'estoufrito_token';
-
-let tokenAtual = null;
-let funcaoExecutadaQuandoSessaoExpirar = null;
-
-export async function salvarTokenNoDispositivo(novoToken) {
-    await AsyncStorage.setItem(CHAVE_TOKEN, novoToken);
-}
-
-export async function lerTokenDoDispositivo() {
-    return await AsyncStorage.getItem(CHAVE_TOKEN);
-}
-
-async function apagarTokenDoDispositivo() {
-    await AsyncStorage.removeItem(CHAVE_TOKEN);
-}
-
-export async function definirToken(novoToken) {
-    tokenAtual = novoToken;
-
-    if (novoToken) {
-        await salvarTokenNoDispositivo(novoToken);
-    } else {
-        await apagarTokenDoDispositivo();
-    }
-}
-
-export function registrarAoSessaoExpirar(funcao) {
-    funcaoExecutadaQuandoSessaoExpirar = funcao;
-}
-
-export async function carregarTokenSalvo() {
-    const tokenSalvo = await lerTokenDoDispositivo();
-    tokenAtual = tokenSalvo;
-    return tokenSalvo !== null;
-}
 
 async function requisicao(caminho, metodo = 'GET', corpo) {
 
     const cabecalhos = {
         'Content-Type': 'application/json'
-    }
-
-    if (tokenAtual) {
-        cabecalhos.Authorization = 'Bearer ' + tokenAtual;
     }
 
     const opcoesDaRequisicao = {
@@ -59,14 +17,6 @@ async function requisicao(caminho, metodo = 'GET', corpo) {
 
     const resposta = await fetch(API_URL + caminho, opcoesDaRequisicao);
 
-    if (resposta.status === 401 && tokenAtual) {
-        await definirToken(null);
-
-        if (funcaoExecutadaQuandoSessaoExpirar) {
-            funcaoExecutadaQuandoSessaoExpirar();
-        }
-
-    }
     const textoDaResposta = await resposta.text();
     let dadosDaResposta;
 
@@ -92,8 +42,6 @@ async function requisicao(caminho, metodo = 'GET', corpo) {
 
     return dadosDaResposta;
 }
-
-export const logarUsuario = (dadosDelogin) => requisicao('/v1/usuarios/login', 'POST', dadosDelogin);
 
 export const listarProdutos = () => requisicao('/v1/produtos');
 
